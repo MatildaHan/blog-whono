@@ -86,6 +86,25 @@
   margin-top: 10px;
 }
 
+@media (min-width: 901px) {
+  .home {
+    --home-top-space: 56px;
+  }
+
+  .home .sidebar,
+  .home .content {
+    padding-top: var(--home-top-space);
+  }
+
+  .home .divider {
+    margin-top: var(--home-top-space);
+  }
+
+  .home .sidebar__title {
+    line-height: 1;
+  }
+}
+
 @media (max-width: 900px) {
   .home--compact-start .content {
     padding-top: calc(4px + env(safe-area-inset-top));
