@@ -26,7 +26,7 @@ let {
 }: Props = $props();
 
 const DEFAULT_BITS_DATETIME_OFFSET = '+08:00';
-const BITS_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})(?:[T\s](\d{2}:\d{2})(?::\d{2}(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
+const BITS_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})(?:[T\s](\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)(Z|[+-]\d{2}:?\d{2})?)?$/;
 const INLINE_TAGS_PLACEHOLDER = '#摄影 #建筑';
 const LOCATION_PLACEHOLDER = '(可选)';
 const FIELD_ICONS = {
@@ -61,7 +61,8 @@ const getDateTimeParts = (dateText: string) => {
 
 const buildDateTimeText = (dateText: string, timeText: string, offset: string): string => {
   if (!dateText) return '';
-  return `${dateText}T${timeText || '00:00'}:00${offset}`;
+  const time = timeText || '00:00:00';
+  return `${dateText}T${time.length === 5 ? `${time}:00` : time}${offset}`;
 };
 
 const formatDateOffset = (date: Date): string => {
@@ -73,7 +74,7 @@ const formatDateOffset = (date: Date): string => {
 
 const formatLocalBitsDateTime = (date = new Date()): string => {
   const dateText = `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
-  const timeText = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  const timeText = `${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
   return buildDateTimeText(dateText, timeText, formatDateOffset(date));
 };
 
@@ -203,6 +204,7 @@ $effect(() => {
         <input
           class="admin-bits-publish-field__control"
           type="time"
+          step="1"
           value={dateTimeParts.time}
           {disabled}
           aria-invalid={dateIssue ? 'true' : undefined}

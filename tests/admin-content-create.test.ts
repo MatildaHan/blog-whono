@@ -48,14 +48,14 @@ describe('admin content create contract', () => {
     expect(source).toContain('tags:');
   });
 
-  it('creates draft bits entries from a selected minute', async () => {
+  it.each(['00', '37'])('creates draft bits entries preserving seconds %s', async (second) => {
     const { POST } = await import('../src/pages/api/admin/content/create');
 
     const response = await POST({
       request: createJsonRequest('http://127.0.0.1:4321/api/admin/content/create', {
         collection: 'bits',
         frontmatter: {
-          date: '2026-06-09T14:30:00-04:00'
+          date: `2026-06-09T14:30:${second}-04:00`
         }
       }),
       url: new URL('http://127.0.0.1:4321/api/admin/content/create')
@@ -69,11 +69,11 @@ describe('admin content create contract', () => {
     expect(payload.editHref).toBe('/admin/content/bits/_edit/bits-2026-06-09-1430/');
     expect(payload.payload.collection).toBe('bits');
     expect(payload.payload.entryId).toBe('bits-2026-06-09-1430');
-    expect(payload.payload.values.date).toBe('2026-06-09T14:30:00-04:00');
+    expect(payload.payload.values.date).toBe(`2026-06-09T14:30:${second}-04:00`);
     expect(payload.payload.values.draft).toBe(true);
 
     const source = await readFile(path.join(getTempRoot(), 'src', 'content', 'bits', 'bits-2026-06-09-1430.md'), 'utf8');
-    expect(source).toContain('date: 2026-06-09T14:30:00-04:00');
+    expect(source).toContain(`date: 2026-06-09T14:30:${second}-04:00`);
     expect(source).toContain('draft: true');
   });
 

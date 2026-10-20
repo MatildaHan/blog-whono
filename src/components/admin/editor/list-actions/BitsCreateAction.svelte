@@ -14,7 +14,7 @@ type Props = {
 
 const CREATE_TRIGGER_SELECTOR = '[data-admin-content-bits-create-action]';
 const BITS_CREATE_DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$/;
-const BITS_CREATE_TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const BITS_CREATE_TIME_RE = /^([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?$/;
 const ENTRY_ID_CONFLICT_MESSAGE = '此时间已使用，请调整创建时间';
 const pad2 = (value: number): string => String(value).padStart(2, '0');
 
@@ -39,7 +39,7 @@ const formatLocalDateInput = (date = new Date()): string =>
   `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
 
 const formatLocalTimeInput = (date = new Date()): string =>
-  `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  `${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
 
 const formatLocalOffset = (date: Date): string => {
   const offsetMinutes = -date.getTimezoneOffset();
@@ -54,13 +54,14 @@ const getSelectedLocalDate = (dateText: string, timeText: string): Date | null =
   if (!dateMatch || !timeMatch) return null;
 
   const [, year, month, day] = dateMatch;
-  const [, hour, minute] = timeMatch;
-  return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+  const [, hour, minute, second = '00'] = timeMatch;
+  return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
 };
 
 const buildLocalBitsCreateDateTime = (dateText: string, timeText: string): string => {
   const selectedDate = getSelectedLocalDate(dateText, timeText) ?? new Date();
-  return `${dateText.trim()}T${timeText.trim()}:00${formatLocalOffset(selectedDate)}`;
+  const time = timeText.trim();
+  return `${dateText.trim()}T${time.length === 5 ? `${time}:00` : time}${formatLocalOffset(selectedDate)}`;
 };
 
 const deriveBitsEntryIdPreview = (dateText: string, timeText: string): string => {
@@ -270,7 +271,7 @@ $effect(() => {
                     class="admin-field__control"
                     name="time"
                     type="time"
-                    step="60"
+                    step="1"
                     required
                     bind:value={timeValue}
                     disabled={busy}

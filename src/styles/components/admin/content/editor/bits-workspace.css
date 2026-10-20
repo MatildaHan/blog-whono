@@ -53,7 +53,7 @@
 
 .admin-bits-publish {
   --admin-bits-date-field-inline-size: 196px;
-  --admin-bits-time-field-inline-size: 136px;
+  --admin-bits-time-field-inline-size: 160px;
 
   display: grid;
   min-width: 0;
@@ -97,7 +97,7 @@
 
 .admin-bits-editor[data-layout='split'][data-view='both'][data-effective-view='both'] .admin-bits-publish {
   --admin-bits-date-field-inline-size: 188px;
-  --admin-bits-time-field-inline-size: 128px;
+  --admin-bits-time-field-inline-size: 152px;
   --admin-bits-inline-tags-input-max-inline-size: 206px;
   --admin-bits-inline-location-input-max-inline-size: 92px;
 }

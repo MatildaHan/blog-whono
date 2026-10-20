@@ -205,7 +205,7 @@ describe('admin-console/content-source-index', () => {
       year: 2025
     });
     expect(bit).toMatchObject({
-      dateLabel: '2025-01-01 00:30',
+      dateLabel: '2025-01-01 00:30:00',
       year: 2025
     });
   });

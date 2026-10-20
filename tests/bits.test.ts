@@ -53,7 +53,7 @@ describe('bits queries', () => {
   it('keeps the displayed date and year in Beijing time across the UTC year boundary', async () => {
     getCollectionMock.mockResolvedValue([bit('new-year', '2026-01-01T00:30:00+08:00')] as never);
     expect(await getBitsSearchIndex(20)).toEqual([
-      expect.objectContaining({ dateLabel: '2026-01-01 00:30', year: 2026 })
+      expect.objectContaining({ dateLabel: '2026-01-01 00:30:00', year: 2026 })
     ]);
   });
 });

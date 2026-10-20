@@ -23,12 +23,13 @@ const formatter = new Intl.DateTimeFormat('en-CA', {
   day: '2-digit',
   hour: '2-digit',
   minute: '2-digit',
+  second: '2-digit',
   hourCycle: 'h23'
 });
 
 export const formatBitsDateTime = (date: Date): string => {
   const parts = Object.fromEntries(formatter.formatToParts(date).map(({ type, value }) => [type, value]));
-  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}`;
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 };
 
 export const getBitsYear = (date: Date): number => Number(formatBitsDateTime(date).slice(0, 4));

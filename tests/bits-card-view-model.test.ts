@@ -36,7 +36,7 @@ describe('bits card view model', () => {
     expect(viewModel.authorAvatar).toBe('/blog/author/alice.webp');
     expect(viewModel.placeText).toBe('Shanghai');
     expect(viewModel.normalTagItems).toEqual(['#daily']);
-    expect(viewModel.dateLabel).toBe('2026-05-27 08:30');
+    expect(viewModel.dateLabel).toBe('2026-05-27 08:30:00');
     expect(viewModel.imageItems).toEqual([
       { src: '/blog/bits/a.webp', width: 800, height: 600, alt: 'A' },
       { src: 'https://example.com/b.webp', alt: '' }
@@ -47,9 +47,9 @@ describe('bits card view model', () => {
     const viewModel = buildBitsCardViewModel({
       id: 'handwritten',
       bodyText: 'Hello',
-      date: '2026-10-20 17:56'
+      date: '2026-10-20 17:56:38'
     });
-    expect(viewModel.dateLabel).toBe('2026-10-20 17:56');
+    expect(viewModel.dateLabel).toBe('2026-10-20 17:56:38');
   });
 
   it('uses the default author avatar when the editor author avatar is empty', () => {
