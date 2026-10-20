@@ -18,6 +18,7 @@ import {
 } from '../content';
 import { collectTagSummary, getTagPath } from '../tags';
 import { formatDateTime, formatISODate, formatISODateUtc } from '../../utils/format';
+import { formatBitsDateTime } from '../../utils/bits-date';
 import { cleanMarkdownToText } from '../../utils/excerpt';
 import packageJson from '../../../package.json';
 
@@ -265,8 +266,8 @@ const getRecentBitsPublication = (
     href: isDraft ? null : bitsHrefById.get(entry.id) ?? null,
     isDraft,
     date: entry.data.date,
-    dateLabel: formatDateTime(entry.data.date),
-    shortDateLabel: formatShortDate(entry.data.date)
+    dateLabel: formatBitsDateTime(entry.data.date),
+    shortDateLabel: formatBitsDateTime(entry.data.date).slice(5, 10).replace('-', '.')
   };
 };
 

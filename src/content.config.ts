@@ -5,6 +5,7 @@ import { ESSAY_PUBLIC_SLUG_RE } from './utils/slug-rules';
 import { normalizeBitsAvatarPath } from './utils/format';
 import { parseEssayDateInput, parseEssayPublishedAtInput } from './utils/date-only';
 import { normalizeBitsImageSource } from './lib/bits-image-source';
+import { parseBitsDateInput } from './utils/bits-date';
 
 const slugRule = z
   .string()
@@ -143,7 +144,12 @@ const bits = defineCollection({
     // Bits can be untitled.
     title: z.string().optional(),
     description: z.string().optional(),
-    date: z.coerce.date(),
+    date: z.unknown().transform((value, ctx) => {
+      const date = parseBitsDateInput(value);
+      if (date) return date;
+      ctx.addIssue({ code: 'custom', message: 'date 必须是有效日期时间，例如 2026-10-20 17:56；省略时区时按北京时间处理' });
+      return z.NEVER;
+    }),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     slug: slugRule.optional(),

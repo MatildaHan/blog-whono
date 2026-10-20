@@ -3,11 +3,11 @@ import { PAGE_SIZE_BITS } from '../../../site.config.mjs';
 import { deriveMarkdownText, truncateText } from '../../utils/excerpt';
 import {
   buildSearchHaystack,
-  formatDateTime,
   formatISODate,
   formatISODateUtc
 } from '../../utils/format';
 import { parseEssayDateInput } from '../../utils/date-only';
+import { formatBitsDateTime, getBitsYear, parseBitsDateInput } from '../../utils/bits-date';
 import {
   contentSourceEntryIdToPublicEntryId,
   flattenEntryIdToSlug
@@ -146,8 +146,8 @@ const getEssaySourceDateMeta = (date: Date | null): SourceDateMeta =>
 const getBitsSourceDateMeta = (date: Date | null): SourceDateMeta =>
   date
     ? {
-      label: formatDateTime(date),
-      year: date.getFullYear()
+      label: formatBitsDateTime(date),
+      year: getBitsYear(date)
     }
     : getUnsetSourceDateMeta();
 
@@ -281,7 +281,7 @@ const createBitsSourceIndexItem: FrontmatterAdapter = (record, context) => {
     ? truncateText(bodyDerived.excerpt || bodyDerived.plainText, 48) || record.entryId
     : record.entryId;
   const title = normalizeFieldValue(frontmatter.title, fallbackTitle);
-  const date = parseDateTimeInput(frontmatter.date);
+  const date = parseBitsDateInput(frontmatter.date);
   const { label, year } = getBitsSourceDateMeta(date);
   const tags = getStringArray(frontmatter.tags);
   const slug = normalizeOptionalText(frontmatter.slug) || record.publicEntryId;
@@ -463,7 +463,7 @@ const buildBitsHrefMap = (records: readonly SourceRecord[]): Map<string, string>
   const routingItems: BitPublicOrderItem[] = [];
 
   for (const record of records) {
-    const date = parseDateTimeInput(record.frontmatter.date);
+    const date = parseBitsDateInput(record.frontmatter.date);
     if (!date) continue;
 
     routingItems.push({

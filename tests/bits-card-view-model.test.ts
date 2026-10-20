@@ -20,7 +20,7 @@ describe('bits card view model', () => {
       slug: 'demo',
       bodyText: 'Hello',
       tags: ['loc:Shanghai', 'daily'],
-      date: new Date(2026, 4, 27, 8, 30),
+      date: new Date('2026-05-27T08:30:00+08:00'),
       images: [
         { src: 'bits/a.webp', width: '800', height: 600, alt: 'A' },
         { src: 'https://example.com/b.webp', width: 'bad', height: '0' },
@@ -41,6 +41,15 @@ describe('bits card view model', () => {
       { src: '/blog/bits/a.webp', width: 800, height: 600, alt: 'A' },
       { src: 'https://example.com/b.webp', alt: '' }
     ]);
+  });
+
+  it('previews handwritten dates in Beijing time without requiring an offset', () => {
+    const viewModel = buildBitsCardViewModel({
+      id: 'handwritten',
+      bodyText: 'Hello',
+      date: '2026-10-20 17:56'
+    });
+    expect(viewModel.dateLabel).toBe('2026-10-20 17:56');
   });
 
   it('uses the default author avatar when the editor author avatar is empty', () => {

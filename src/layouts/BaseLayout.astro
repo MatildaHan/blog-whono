@@ -96,7 +96,7 @@ const adminUiPrefsScriptHref = isDevAdminPage
 ---
 
 <!doctype html>
-<html lang={htmlLang} style={typographyStyleOverride ?? undefined}>
+<html lang={htmlLang} class:list={{ 'memo-scrollbar-hidden': bodyClassNames.some((name) => name === 'memo-page' || name === 'memo-index-page') }} style={typographyStyleOverride ?? undefined}>
   <head>
     <script is:inline>
       (() => {

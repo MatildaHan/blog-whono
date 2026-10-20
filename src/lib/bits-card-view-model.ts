@@ -1,4 +1,5 @@
-import { createWithBase, formatDateTime } from '../utils/format';
+import { createWithBase } from '../utils/format';
+import { formatBitsDateTime, parseBitsDateInput } from '../utils/bits-date';
 import { deriveMarkdownText, truncateText } from '../utils/excerpt';
 import { normalizeBitsImageSource } from './bits-image-source';
 
@@ -71,12 +72,12 @@ const toPositiveInteger = (value: number | string | undefined): number | undefin
 };
 
 const toDateLabel = (value: Date | string | null | undefined): string => {
-  if (value instanceof Date) return Number.isNaN(value.valueOf()) ? '' : formatDateTime(value);
+  if (value instanceof Date) return Number.isNaN(value.valueOf()) ? '' : formatBitsDateTime(value);
   if (typeof value !== 'string') return '';
   const trimmed = value.trim();
   if (!trimmed) return '';
-  const parsed = new Date(trimmed);
-  return Number.isNaN(parsed.valueOf()) ? trimmed : formatDateTime(parsed);
+  const parsed = parseBitsDateInput(trimmed);
+  return parsed ? formatBitsDateTime(parsed) : trimmed;
 };
 
 export const deriveBitsCardText = (bodyText: string): BitsCardText => {

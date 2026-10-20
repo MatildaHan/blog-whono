@@ -8,7 +8,6 @@ import {
   loadAdminContentSourceIndexWithBody,
   loadAdminContentSourceManifest
 } from '../src/lib/admin-console/content-source-index';
-import { formatDateTime } from '../src/utils/format';
 
 const { deriveMarkdownTextMock, readFileMock } = vi.hoisted(() => ({
   deriveMarkdownTextMock: vi.fn(),
@@ -188,7 +187,6 @@ describe('admin-console/content-source-index', () => {
 
   it('keeps collection-specific date semantics in source index items', async () => {
     const bitsDateText = '2025-01-01T00:30:00+08:00';
-    const bitsDate = new Date(bitsDateText);
     await writeContent('essay', 'legacy-datetime.md', markdown(`
       title: Legacy Datetime Essay
       date: 2025-01-01T00:30:00+08:00
@@ -207,8 +205,8 @@ describe('admin-console/content-source-index', () => {
       year: 2025
     });
     expect(bit).toMatchObject({
-      dateLabel: formatDateTime(bitsDate),
-      year: bitsDate.getFullYear()
+      dateLabel: '2025-01-01 00:30',
+      year: 2025
     });
   });
 

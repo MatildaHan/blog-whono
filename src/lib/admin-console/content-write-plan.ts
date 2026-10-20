@@ -1,4 +1,5 @@
 import { normalizeBitsAvatarPath } from '../../utils/format';
+import { parseBitsDateInput } from '../../utils/bits-date';
 import {
   parseEssayDateInput,
   parseEssayPublishedAtInput
@@ -223,7 +224,7 @@ export const buildBitsFrontmatterFromValues = (
 
   if (!date) {
     issues.push(createIssue('date', 'bits.date 不能为空'));
-  } else if (Number.isNaN(new Date(date).valueOf())) {
+  } else if (!parseBitsDateInput(date)) {
     issues.push(createIssue('date', 'bits.date 不是合法日期时间'));
   }
 

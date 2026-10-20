@@ -2,6 +2,15 @@
    只承载 memo 页面私有规则；禁止放共享正文样式或其他页面特例。
 */
 
+/* 隐藏根滚动条以保持与短页面相同的布局宽度，仍可滚轮、触摸和键盘滚动。 */
+html.memo-scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+html.memo-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 .memo-page {
   --memo-intro-mb: 32px;
   --memo-toc-mt: 18px;
