@@ -158,7 +158,10 @@ const assertUniqueEssaySlugs = (entries: readonly EssayEntry[]) => {
   );
 };
 
-const orderByEssayDate = (a: EssayEntry, b: EssayEntry) => b.data.date.valueOf() - a.data.date.valueOf();
+const orderByEssayDate = (a: EssayEntry, b: EssayEntry) =>
+  b.data.date.valueOf() - a.data.date.valueOf()
+  || Number(Boolean(b.data.publishedAt)) - Number(Boolean(a.data.publishedAt))
+  || (b.data.publishedAt?.valueOf() ?? 0) - (a.data.publishedAt?.valueOf() ?? 0);
 const shouldMemoizeEssayQueries = import.meta.env.PROD;
 const shouldMemoizeMemoQueries = import.meta.env.PROD;
 const MAX_ESSAY_INDEX_TEXT = 600;

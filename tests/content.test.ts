@@ -8,7 +8,7 @@ vi.mock('astro:content', () => ({
 }));
 
 import { getCollection } from 'astro:content';
-import { getPublished } from '../src/lib/content';
+import { getPublished, getSortedEssays } from '../src/lib/content';
 
 const getCollectionMock = vi.mocked(getCollection);
 
@@ -46,5 +46,20 @@ describe('content queries', () => {
     const entries = await getPublished('essay', { includeDraft: true });
 
     expect(entries.map((entry) => entry.id)).toEqual(['existing']);
+  });
+
+  it('orders essays on the same day by publication time so the home page receives the latest', async () => {
+    const date = new Date('2026-10-20T00:00:00Z');
+    getCollectionMock.mockResolvedValue([
+      { id: 'morning', data: { date, publishedAt: new Date('2026-10-20T09:00:00+08:00') } },
+      { id: 'early-morning', data: { date, publishedAt: new Date('2026-10-20T00:01:00+08:00') } },
+      { id: 'date-only', data: { date } },
+      { id: 'previous-day', data: { date: new Date('2026-10-19T00:00:00Z') } },
+      { id: 'evening', data: { date, publishedAt: new Date('2026-10-20T21:00:00+08:00') } }
+    ] as never);
+
+    const entries = await getSortedEssays({ includeDraft: true });
+
+    expect(entries.map((entry) => entry.id)).toEqual(['evening', 'morning', 'early-morning', 'date-only', 'previous-day']);
   });
 });

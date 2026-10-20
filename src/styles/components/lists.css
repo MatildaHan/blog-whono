@@ -254,6 +254,11 @@
   font-family: var(--font-copy);
 }
 
+.essay-page .list-item__excerpt {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;

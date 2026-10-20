@@ -2,6 +2,7 @@
 import Sidebar from '../components/Sidebar.astro';
 import UiIcon from '../components/UiIcon.astro';
 import globalStylesHref from '../styles/global.css?url';
+import scrollbarStyles from '../styles/scrollbars.css?inline';
 import { hasSiteUrl } from '../../site.config.mjs';
 import { createWithBase } from '../utils/format';
 import {
@@ -96,8 +97,9 @@ const adminUiPrefsScriptHref = isDevAdminPage
 ---
 
 <!doctype html>
-<html lang={htmlLang} class:list={{ 'memo-scrollbar-hidden': bodyClassNames.some((name) => name === 'memo-page' || name === 'memo-index-page') }} style={typographyStyleOverride ?? undefined}>
+<html lang={htmlLang} style={typographyStyleOverride ?? undefined}>
   <head>
+    <style is:inline set:html={scrollbarStyles}></style>
     <script is:inline>
       (() => {
         // 与 src/scripts/sidebar-theme.ts 保持同一主题偏好契约，避免首屏与运行时状态漂移。

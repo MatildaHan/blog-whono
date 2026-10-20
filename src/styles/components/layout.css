@@ -1089,6 +1089,20 @@ body.admin-page .sidebar-actions .icon-button[data-tooltip]::after {
   transform: translate(-50%, 0);
 }
 
+/* 窄屏顶部的提示向内展开，避免伪元素撑出页面右侧。 */
+@media (max-width: 900px) {
+  :where(body:not(.admin-page)) .sidebar-actions .icon-button[data-tooltip]::after {
+    left: auto;
+    right: 0;
+    transform: translateY(4px);
+  }
+
+  :where(body:not(.admin-page)) .sidebar-actions .icon-button[data-tooltip]:hover::after,
+  :where(body:not(.admin-page)) .sidebar-actions .icon-button[data-tooltip]:focus-visible::after {
+    transform: translateY(0);
+  }
+}
+
 .icon-button:hover {
   color: var(--text);
 }

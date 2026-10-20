@@ -1,0 +1,15 @@
+/* 所有页面在首屏统一隐藏根滚动条，长短页面保持相同宽度，仍可正常滚动。 */
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* 宽表格、代码和图片继续在各自容器内滚动，不扩大页面本身的宽度。 */
+body {
+  overflow-x: clip;
+}
