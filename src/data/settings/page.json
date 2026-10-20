@@ -1,15 +1,15 @@
 {
   "essay": {
     "title": "随笔",
-    "subtitle": "随笔与杂记"
+    "subtitle": "想到哪儿写到哪儿，没什么章法，也不打算有。"
   },
   "archive": {
     "title": "归档",
-    "subtitle": null
+    "subtitle": "东西该有个地方待着。翻不翻另说，先放着。"
   },
   "bits": {
     "title": "絮语",
-    "subtitle": "生活不只是长篇",
+    "subtitle": "一些没头没尾的话，算是日子的一点回声。",
     "defaultAuthor": {
       "name": "Whono",
       "avatar": "author/avatar.webp"
@@ -21,6 +21,6 @@
   },
   "about": {
     "title": "关于",
-    "subtitle": null
+    "subtitle": "这里没什么大事。关于我，几句话说不清，也不必说清，翻翻别的页面就知道了。"
   }
 }
