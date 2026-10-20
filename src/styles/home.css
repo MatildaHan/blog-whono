@@ -58,7 +58,11 @@
   flex-shrink: 0;
   border: 0;
   background: var(--border);
-  margin: 4px 0 2px 14px;
+  margin: 4px 0 2px;
+}
+
+.home .list-item--link {
+  padding-inline: 0;
 }
 
 .home .list-item__excerpt {
