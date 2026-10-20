@@ -1,11 +1,11 @@
 {
-  "title": "Astro Themes by Whono",
-  "description": "一个极简双栏 Astro 主题的展示站",
+  "title": "记录存在的真实",
+  "description": "当你不能再拥有的时候，唯一可以做的就是令自己不要忘记。",
   "defaultLocale": "zh-CN",
   "footer": {
-    "startYear": 2025,
+    "startYear": 2026,
     "showCurrentYear": true,
-    "copyright": "Whono · Theme Demo · by cxro"
+    "copyright": "北冥"
   },
   "adminOverview": {
     "publicVisible": true,
