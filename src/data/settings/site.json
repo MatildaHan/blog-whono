@@ -17,9 +17,9 @@
     "appleTouchIcon": null
   },
   "socialLinks": {
-    "github": "https://github.com/cxro/astro-whono",
-    "x": "https://twitter.com/yourname",
-    "email": "Astro@Whono.me",
+    "github": "",
+    "x": "",
+    "email": "",
     "presetOrder": {
       "github": 1,
       "x": 2,
