@@ -128,6 +128,7 @@
   --max: 900px;
   --sidebar: 320px;
   --layout-shell-max-inline-size: 1100px;
+  --layout-top-space: 56px;
   --layout-divider-inline-size: 1px;
   --public-sidebar-inline-size: 320px;
   --public-content-padding-inline: 48px;
