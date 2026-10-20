@@ -11,7 +11,6 @@ import { getThemeSettings } from '../../lib/theme-settings';
 import { containsMarkdownMath } from '../../lib/markdown-math';
 import {
   buildMemoTocGroups,
-  LEGACY_MEMO_INTRO_LINES,
   resolveMemoRenderedSections
 } from '../../lib/memo-page';
 import {
@@ -19,6 +18,8 @@ import {
   MARKDOWN_MATH_STYLESHEET_HREF,
   MARKDOWN_MATH_STYLESHEET_ID
 } from '../../lib/markdown-math-styles';
+
+export const prerender = true;
 
 export async function getStaticPaths() {
   return getVisibleMemoYears(await getCollection('memo'), !import.meta.env.PROD).map((entry) => ({
@@ -104,18 +105,11 @@ const groups = buildMemoTocGroups(headings);
     </button>
   </div>
 
-  <div class="intro prose">
-    {MemoIntroContent ? (
+  {MemoIntroContent && (
+    <div class="intro prose">
       <MemoIntroContent />
-    ) : (
-      LEGACY_MEMO_INTRO_LINES.map((line, index) => (
-        <>
-          {index > 0 ? <br /> : null}
-          {line}
-        </>
-      ))
-    )}
-  </div>
+    </div>
+  )}
 
   <nav class="memo-toc" aria-label="目录">
     {groups.map((g) => (

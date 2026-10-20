@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import {
-  LEGACY_MEMO_INTRO_LINES,
   buildMemoTocGroups,
   findFirstMemoContentHeadingOffset,
   resolveMemoRenderedSections,
@@ -11,8 +10,8 @@ import {
 describe('memo page content split', () => {
   it('treats markdown before the first H2 as editable memo intro', () => {
     const source = [
-      '时间流经我们。  ',
-      '也许，为瞬间留下一份文字备份。',
+      '引言第一行。  ',
+      '引言第二行。',
       '',
       '## 2025年记',
       '',
@@ -23,8 +22,8 @@ describe('memo page content split', () => {
 
     expect(splitMemoMarkdownBody(source)).toEqual({
       introMarkdown: [
-        '时间流经我们。  ',
-        '也许，为瞬间留下一份文字备份。',
+        '引言第一行。  ',
+        '引言第二行。',
         '',
         ''
       ].join('\n'),
@@ -39,7 +38,7 @@ describe('memo page content split', () => {
     });
   });
 
-  it('keeps legacy intro available when the memo body starts with a content H2', () => {
+  it('leaves the intro empty when the memo body starts with a content H2', () => {
     const source = ['## 2025年记', '', '### 新屋', '', '正文'].join('\n');
 
     expect(splitMemoMarkdownBody(source)).toEqual({
@@ -47,7 +46,12 @@ describe('memo page content split', () => {
       contentMarkdown: source,
       hasBodyIntro: false
     });
-    expect(LEGACY_MEMO_INTRO_LINES).toContain('时间流经我们，如同风穿过回廊。');
+    const renderedHtml = '<h2 id="2025年记">2025年记</h2>\n<h3 id="新屋">新屋</h3>\n<p>正文</p>';
+    expect(resolveMemoRenderedSections({
+      markdownBody: source,
+      renderedHtml,
+      headings: [{ depth: 2, text: '2025年记', slug: '2025年记' }]
+    })).toEqual({ introHtml: '', contentHtml: renderedHtml });
   });
 
   it('ignores H2 markers inside fenced code when locating the content body', () => {
@@ -67,16 +71,16 @@ describe('memo page content split', () => {
 
   it('splits rendered html using the first rendered H2 boundary', () => {
     const rendered = [
-      '<p>时间流经我们。<br>',
-      '也许，为瞬间留下一份文字备份。</p>',
+      '<p>引言第一行。<br>',
+      '引言第二行。</p>',
       '<h2 id="2025年记">2025年记</h2>',
       '<p>正文</p>'
     ].join('\n');
 
     expect(splitMemoRenderedHtml(rendered, true, [{ depth: 2, slug: '2025年记' }])).toEqual({
       introHtml: [
-        '<p>时间流经我们。<br>',
-        '也许，为瞬间留下一份文字备份。</p>'
+        '<p>引言第一行。<br>',
+        '引言第二行。</p>'
       ].join('\n'),
       contentHtml: ['<h2 id="2025年记">2025年记</h2>', '<p>正文</p>'].join('\n')
     });
