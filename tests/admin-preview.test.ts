@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFile } from 'node:fs/promises';
 
 const createJsonRequest = (url: string, payload: unknown) =>
@@ -12,6 +12,7 @@ const createJsonRequest = (url: string, payload: unknown) =>
   });
 
 describe('admin preview api', () => {
+  afterEach(() => vi.restoreAllMocks());
   it('renders markdown with project callout and sanitize rules', async () => {
     const { POST } = await import('../src/pages/api/admin/preview');
 
@@ -208,7 +209,7 @@ describe('admin preview api', () => {
       await readFile('src/content/essay/markdown-guide.md', 'utf8')
     ).bodyText;
     const memo = splitMarkdownFrontmatter(
-      await readFile('src/content/memo/index.md', 'utf8')
+      await readFile('tests/fixtures/memo-preview.md', 'utf8')
     ).bodyText;
 
     const markdownGuideResult = await renderAdminMarkdownPreview({
@@ -254,7 +255,13 @@ describe('admin preview api', () => {
 
   it('renders about markdown-first preview with friend and FAQ directives', async () => {
     const { POST } = await import('../src/pages/api/admin/preview');
-    const { getThemeSettings } = await import('../src/lib/theme-settings');
+    const themeSettings = await import('../src/lib/theme-settings');
+    const fixtureSettings = structuredClone(themeSettings.getThemeSettings());
+    fixtureSettings.settings.site.socialLinks.resolvedSocialItems = [
+      { id: 'github', label: 'GitHub', href: 'https://github.com/example/project', iconKey: 'github', kind: 'preset', visible: true, order: 1 },
+      { id: 'email', label: 'Email', href: 'mailto:fixture@example.com', iconKey: 'email', kind: 'preset', visible: true, order: 2 }
+    ];
+    vi.spyOn(themeSettings, 'getThemeSettings').mockReturnValue(fixtureSettings);
 
     const response = await POST({
       request: createJsonRequest('http://127.0.0.1:4321/api/admin/preview', {
@@ -311,11 +318,27 @@ describe('admin preview api', () => {
     expect(payload.result.html).not.toContain('about-site-info__eyebrow');
     expect(payload.result.html).not.toContain('src="/author/avatar.webp"');
     expect(payload.result.html).toContain('class="contact-list"');
-    expect(payload.result.html).toContain('href="https://github.com/cxro/astro-whono"');
-    expect(payload.result.html).toContain(`href="mailto:${getThemeSettings().settings.site.socialLinks.email}"`);
+    expect(payload.result.html).toContain('href="https://github.com/example/project"');
+    expect(payload.result.html).toContain('href="mailto:fixture@example.com"');
     expect(payload.result.html).not.toContain('data-about-contact-links');
     expect(payload.result.html).not.toContain('javascript:alert');
     expect(payload.result.html).not.toContain('http://bad.example');
+  });
+
+  it('omits the contact list when no social links are configured', async () => {
+    const themeSettings = await import('../src/lib/theme-settings');
+    const fixtureSettings = structuredClone(themeSettings.getThemeSettings());
+    fixtureSettings.settings.site.socialLinks.resolvedSocialItems = [];
+    vi.spyOn(themeSettings, 'getThemeSettings').mockReturnValue(fixtureSettings);
+    const { renderAdminMarkdownPreview } = await import('../src/lib/admin-console/preview');
+
+    const result = await renderAdminMarkdownPreview({
+      collection: 'about', entryId: 'index', source: '## 联系\n\n::contact-links'
+    });
+
+    expect(result.html).not.toContain('contact-list');
+    expect(result.html).not.toContain('data-about-contact-links');
+    expect(result.html).not.toContain('mailto:');
   });
 
   it('keeps about-only directives out of essay and memo preview rendering', async () => {

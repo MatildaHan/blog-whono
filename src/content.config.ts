@@ -163,6 +163,8 @@ const bits = defineCollection({
 const memo = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/memo' }),
   schema: z.object({
+    year: z.number().int().min(1000).max(9999),
+    description: z.string().trim().min(1),
     title: z.string().optional(),
     subtitle: z.string().optional(),
     date: z.coerce.date().optional(),

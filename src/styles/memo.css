@@ -195,3 +195,124 @@ body.memo-page[data-reading="immersive"] .prose p {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* 年度索引与详情返回入口；正文规则保持共用。 */
+.memo-index-intro {
+  margin: 28px 0 32px;
+  color: var(--muted);
+}
+
+.memo-years {
+  list-style: none;
+  margin: 0 0 40px;
+  padding: 0;
+  border-top: 1px solid var(--border);
+}
+
+.memo-year {
+  display: grid;
+  grid-template-columns: 105px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 18px;
+  padding: 34px 4px;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.16s ease;
+}
+
+.memo-year:hover {
+  background-color: var(--panel);
+  border-bottom-color: var(--border);
+}
+
+.memo-year-number {
+  font-family: Georgia, serif;
+  font-size: 37px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+}
+
+.memo-year-unit {
+  margin-left: 5px;
+  font-family: var(--font-readable);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+.memo-year-copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.memo-year-description {
+  display: block;
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.memo-year-meta {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.memo-year-arrow {
+  color: var(--muted);
+}
+
+.memo-year:hover .memo-year-arrow {
+  color: var(--accent);
+}
+
+.memo-back {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-size: 13px;
+  border-bottom: 0;
+}
+
+.memo-back-year {
+  margin-left: 12px;
+  font-family: Georgia, serif;
+}
+
+.memo-empty {
+  color: var(--muted);
+}
+
+@media (max-width: 640px) {
+  .memo-index-intro {
+    margin: 22px 0 26px;
+    font-size: 14px;
+  }
+
+  .memo-year {
+    grid-template-columns: 79px minmax(0, 1fr) 15px;
+    gap: 10px;
+    padding: 28px 0;
+  }
+
+  .memo-year-number {
+    font-size: 30px;
+  }
+
+  .memo-year-unit {
+    font-size: 11px;
+    margin-left: 3px;
+  }
+
+  .memo-year-description {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memo-year {
+    transition: none;
+  }
+}

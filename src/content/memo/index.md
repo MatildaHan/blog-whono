@@ -1,7 +1,8 @@
-
 ---
 
 title: "纪年"
+year: 2026
+description: "日子一天接一天地过。"
 subtitle: "数完太阳数月亮"
 date: 2026-10-07
 draft: false

@@ -1,4 +1,4 @@
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
@@ -16,20 +16,36 @@ import {
 describe('theme-settings revision semantics', () => {
   const originalInternalTestFlag = process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS;
   const originalInternalTestDir = process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS_DIR;
+  const originalInternalProjectRoot = process.env.ASTRO_WHONO_INTERNAL_TEST_PROJECT_ROOT;
+  // Start from normalized settings; personal configuration must not invalidate
+  // fixtures intended to exercise one particular settings field.
+  const fixtureSettings = getEditableThemeSettingsPayload().settings;
   const tempDirs: string[] = [];
 
   const createTempSettingsFixture = async (): Promise<string> => {
     const tempRoot = await mkdtemp(path.join(tmpdir(), 'astro-whono-theme-settings-test-'));
     const settingsDir = path.join(tempRoot, 'settings');
-    await cp(path.resolve('src/data/settings'), settingsDir, { recursive: true });
+    await mkdir(settingsDir, { recursive: true });
+    await Promise.all(Object.entries(fixtureSettings).map(([group, settings]) =>
+      writeFile(path.join(settingsDir, `${group}.json`), `${JSON.stringify(settings, null, 2)}\n`)
+    ));
+    const publicDir = path.join(tempRoot, 'public');
+    await mkdir(publicDir);
+    // These tests check file presence and filename-derived sizes, not image decoding.
+    await Promise.all(['favicon.svg', 'favicon-32x32.png', 'apple-touch-icon.png'].map((name) =>
+      writeFile(path.join(publicDir, name), 'fixture asset')
+    ));
     tempDirs.push(tempRoot);
     process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS = '1';
     process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS_DIR = settingsDir;
+    process.env.ASTRO_WHONO_INTERNAL_TEST_PROJECT_ROOT = tempRoot;
+    resetThemeSettingsCache();
     return settingsDir;
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     resetThemeSettingsCache();
+    await createTempSettingsFixture();
   });
 
   afterEach(async () => {
@@ -44,6 +60,11 @@ describe('theme-settings revision semantics', () => {
       delete process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS_DIR;
     } else {
       process.env.ASTRO_WHONO_INTERNAL_TEST_SETTINGS_DIR = originalInternalTestDir;
+    }
+    if (originalInternalProjectRoot === undefined) {
+      delete process.env.ASTRO_WHONO_INTERNAL_TEST_PROJECT_ROOT;
+    } else {
+      process.env.ASTRO_WHONO_INTERNAL_TEST_PROJECT_ROOT = originalInternalProjectRoot;
     }
 
     await Promise.all(tempDirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));

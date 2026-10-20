@@ -147,7 +147,8 @@ describe('admin-console/shared', () => {
     const raw = structuredClone(getEditableThemeSettingsPayload().settings) as Record<string, any>;
     raw.site.title = `  ${raw.site.title}  `;
     raw.site.footer.startYear = String(raw.site.footer.startYear);
-    raw.site.socialLinks.email = `mailto:${raw.site.socialLinks.email}`;
+    const fixtureEmail = 'fixture@example.com';
+    raw.site.socialLinks.email = `mailto:${fixtureEmail}`;
     raw.site.socialLinks.custom = [
       {
         id: 'custom-home',
@@ -167,7 +168,7 @@ describe('admin-console/shared', () => {
 
     expect(canonical.site.title).toBe(getEditableThemeSettingsPayload().settings.site.title);
     expect(canonical.site.footer.startYear).toBe(getEditableThemeSettingsPayload().settings.site.footer.startYear);
-    expect(canonical.site.socialLinks.email).toBe(getEditableThemeSettingsPayload().settings.site.socialLinks.email);
+    expect(canonical.site.socialLinks.email).toBe(fixtureEmail);
     expect(canonical.site.socialLinks.custom[0]).toMatchObject({
       iconKey: 'website',
       label: 'website',
