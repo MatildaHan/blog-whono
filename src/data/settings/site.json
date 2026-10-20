@@ -17,9 +17,9 @@
     "appleTouchIcon": null
   },
   "socialLinks": {
-    "github": "",
-    "x": "",
-    "email": "",
+    "github": null,
+    "x": null,
+    "email": null,
     "presetOrder": {
       "github": 1,
       "x": 2,

@@ -313,3 +313,16 @@ describe('theme-settings revision semantics', () => {
     }
   });
 });
+
+// Check the actual repository files as well as isolated field-level fixtures.
+describe('checked-in theme settings', () => {
+  it('opens the local console with a valid writable settings snapshot', async () => {
+    const { validateAdminThemeSettings } = await import('../src/lib/admin-console/theme-shared');
+    resetThemeSettingsCache();
+    const resolved = getThemeSettings();
+    expect(getThemeSettingsReadDiagnostics(resolved)).toEqual([]);
+    const state = getEditableThemeSettingsState(resolved);
+    expect(state.ok).toBe(true);
+    if (state.ok) expect(validateAdminThemeSettings(state.payload.settings)).toEqual([]);
+  });
+});
