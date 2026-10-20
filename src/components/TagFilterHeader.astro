@@ -38,7 +38,8 @@ const {
   tagOptions?: TagOption[];
 };
 
-const hasTagEntry = tagOptions.length > 0;
+// 强制关闭标签功能入口
+const hasTagEntry = false;
 const tagTriggerText = currentTag ? '切换标签' : '#标签';
 ---
 
@@ -55,7 +56,9 @@ const tagTriggerText = currentTag ? '切换标签' : '#标签';
     </div>
     <span class:list={['page-subtitle', 'page-subtitle--entry-filters', currentTag && 'page-subtitle--with-current-tag']}>
       {subtitleText ? <span class="page-subtitle__text">{subtitleText}</span> : null}
-      {!currentTag ? <a class="page-subtitle__link page-subtitle__item" href={rssHref}>RSS</a> : null}
+      
+      {/* 已删除 RSS 链接代码 */}
+
       {hasTagEntry ? (
         currentTag ? (
           <span class="page-subtitle__item page-subtitle__actions">
@@ -113,6 +116,7 @@ const tagTriggerText = currentTag ? '切换标签' : '#标签';
   </div>
 </div>
 
+{/* 因为 hasTagEntry 被设为 false，下方的整个标签弹窗模块都不会被渲染 */}
 {hasTagEntry ? (
   <>
     <dialog class="entry-tags-dialog" data-entry-tag-dialog aria-labelledby={dialogTitleId}>

@@ -5,7 +5,7 @@
     "",
     ""
   ],
-  "showIntroLead": false,
+  "showIntroLead": true,
   "showIntroMore": false,
   "heroPresetId": "custom",
   "heroImageSrc": "/images/banner.jpg",

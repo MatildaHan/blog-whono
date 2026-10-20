@@ -1,5 +1,5 @@
 {
-  "brandTitle": "漂流记",
+  "brandTitle": "昼长",
   "quote": "有一个下午，猫打了个哈欠，光从窗户透下来，有风吹过。",
   "nav": [
     {
@@ -17,15 +17,15 @@
       "order": 2
     },
     {
-      "id": "memo",
-      "label": "小记",
+      "id": "archive",
+      "label": "归档",
       "ornament": "·",
       "visible": true,
       "order": 3
     },
     {
-      "id": "archive",
-      "label": "归档",
+      "id": "memo",
+      "label": "纪年",
       "ornament": "·",
       "visible": true,
       "order": 4
