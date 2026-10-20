@@ -934,7 +934,7 @@ describe('admin images api', () => {
     expect(payload.ok).toBe(false);
     expect(payload.errors).toEqual(
       expect.arrayContaining([
-        expect.stringContaining('当前仅支持随笔正文图片、小记正文图片或絮语配图上传')
+        expect.stringContaining('当前仅支持随笔正文图片、纪年正文图片或絮语配图上传')
       ])
     );
     await expect(readFile(path.join(tempRoot, 'src', 'content', 'about', 'about-shot.png'))).rejects.toThrow();

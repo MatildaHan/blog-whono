@@ -115,7 +115,7 @@ export const POST: APIRoute = async ({ request, url }) => {
   const errors: string[] = [];
 
   if (!isAdminContentImageUploadCollectionKey(collection)) {
-    errors.push('当前仅支持随笔正文图片、小记正文图片或絮语配图上传');
+    errors.push('当前仅支持随笔正文图片、纪年正文图片或絮语配图上传');
   }
   if (!entryId) {
     errors.push('上传请求缺少 entryId');

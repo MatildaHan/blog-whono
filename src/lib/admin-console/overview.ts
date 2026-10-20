@@ -161,7 +161,7 @@ const COLLECTION_LABELS: Record<AdminOverviewCollectionKey, string> = {
 const COLLECTION_DETAILS: Record<AdminOverviewCollectionKey, string> = {
   essay: '文章',
   bits: '动态',
-  memo: '小记'
+  memo: '纪年'
 };
 
 const RECENT_LIMIT = 6;
@@ -275,7 +275,7 @@ const getRecentMemoPublication = (entry: MemoEntry): AdminOverviewRecentPublicat
   const isDraft = entry.data.draft === true;
   const title = entry.data.title?.trim()
     || getMemoDerivedText(entry).excerptText
-    || '小记';
+    || '纪年';
   return {
     collection: 'memo',
     collectionLabel: COLLECTION_LABELS.memo,

@@ -83,7 +83,7 @@ describe('admin content fixed-page write contract', () => {
     const before = await readFile(path.join(getTempRoot(), 'src', 'content', 'memo', 'index.md'), 'utf8');
     const beforeSection = splitMarkdownFrontmatter(before);
 
-    const nextBody = ['# Memo', '', '小记正文已写入。', ''].join('\n');
+    const nextBody = ['# Memo', '', '纪年正文已写入。', ''].join('\n');
     const response = await POST({
       request: createJsonRequest('http://127.0.0.1:4321/api/admin/content/entry', {
         collection: 'memo',

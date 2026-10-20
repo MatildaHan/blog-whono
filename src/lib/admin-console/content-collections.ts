@@ -78,7 +78,7 @@ export const ADMIN_CONTENT_COLLECTION_CAPABILITIES = {
   },
   memo: {
     collection: 'memo',
-    label: '小记',
+    label: '纪年',
     consoleSectionHref: '/memo/',
     fixedPage: {
       entryId: 'index',

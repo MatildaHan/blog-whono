@@ -197,7 +197,7 @@ const ADMIN_IMAGE_SHORT_CACHE_MAX_ENTRIES = 32;
 const CONTENT_COLLECTION_LABELS = {
   essay: '随笔',
   bits: '絮语',
-  memo: '小记'
+  memo: '纪年'
 } as const;
 const OWNER_PATH_SEPARATORS = ['/', '.', '-', '_'] as const;
 const ADMIN_IMAGE_SCAN_ROOTS = [

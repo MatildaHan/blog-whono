@@ -20,19 +20,6 @@ const notifyReadingModeChange = () => {
   window.dispatchEvent(new CustomEvent('astro-whono:reading-mode-change'));
 };
 
-const setReaderDisabled = (disabled: boolean) => {
-  if (!readerBtn) return;
-  readerBtn.setAttribute('aria-pressed', 'false');
-  readerBtn.setAttribute('aria-disabled', disabled ? 'true' : 'false');
-  if (disabled) {
-    setControlLabel(readerBtn, '阅读模式（仅文章/小记页可用）');
-    readerBtn.tabIndex = -1;
-  } else {
-    setControlLabel(readerBtn, '阅读模式');
-    readerBtn.tabIndex = 0;
-  }
-};
-
 const setVisible = (el: HTMLElement | null, visible: boolean) => {
   if (!el) return;
   if (visible) {
@@ -64,13 +51,7 @@ const applyReader = (on: boolean) => {
 };
 
 const initReader = () => {
-  if (!readerBtn) return;
-  if (!isImmersivePage) {
-    setReaderDisabled(true);
-    return;
-  }
-
-  setReaderDisabled(false);
+  if (!readerBtn || !isImmersivePage) return;
   applyReader(false);
 
   readerBtn.addEventListener('click', () => {

@@ -32,7 +32,7 @@ const { getAdminContentEntryListHref } = contentRoutesModule;
 const COLLECTION_LABELS: Record<AdminContentCollectionKey, string> = {
   essay: '随笔',
   bits: '絮语',
-  memo: '小记',
+  memo: '纪年',
   about: '关于'
 };
 
@@ -93,7 +93,7 @@ const createDefaultItems = (): Record<AdminContentCollectionKey, AdminContentInd
   memo: [
     createItem({
       collection: 'memo',
-      collectionLabel: '小记',
+      collectionLabel: '纪年',
       id: 'index',
       publicEntryId: 'index',
       title: 'Memo',
@@ -337,7 +337,7 @@ describe('admin-console/content', () => {
       { value: 'all', label: '全部内容', count: 5 },
       { value: 'essay', label: '随笔', count: 2 },
       { value: 'bits', label: '絮语', count: 1 },
-      { value: 'memo', label: '小记', count: 1 },
+      { value: 'memo', label: '纪年', count: 1 },
       { value: 'about', label: '关于', count: 1 }
     ]);
     expect('tagOptions' in pageData).toBe(false);
@@ -625,7 +625,7 @@ describe('admin-console/content', () => {
     expect(
       getAdminContentPublicFallbackLabel(createItem({
         collection: 'memo',
-        collectionLabel: '小记',
+        collectionLabel: '纪年',
         id: 'index',
         publicHref: null,
         relativePath: 'src/content/memo/index.md'

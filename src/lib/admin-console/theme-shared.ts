@@ -92,7 +92,7 @@ export const ADMIN_HOME_INTRO_LINK_OPTIONS = [
   { id: 'archive', label: '归档', href: '/archive/' },
   { id: 'essay', label: '随笔', href: '/essay/' },
   { id: 'bits', label: '絮语', href: '/bits/' },
-  { id: 'memo', label: '小记', href: '/memo/' },
+  { id: 'memo', label: '纪年', href: '/memo/' },
   { id: 'about', label: '关于', href: '/about/' },
   { id: 'tag', label: '#标签', href: '/archive/?picker=tag' }
 ] as const satisfies readonly {

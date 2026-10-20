@@ -29,7 +29,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props as { entry: CollectionEntry<'memo'> };
 const withBase = createWithBase(import.meta.env.BASE_URL);
-const DEFAULT_MEMO_TITLE = '生活小记';
+const DEFAULT_MEMO_TITLE = '纪年';
 const DEFAULT_MEMO_SUBTITLE = '整理一些值得留存的片刻与回忆。';
 
 const {
@@ -70,6 +70,7 @@ const groups = buildMemoTocGroups(headings);
   title={`${entry.data.year} · ${memoTitle}`}
   description={entry.data.description}
   bodyClass="memo-page immersive-page"
+  allowReadingMode
   activeNavId="memo"
 >
   {hasMath ? (
