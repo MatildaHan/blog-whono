@@ -16,11 +16,11 @@
     }
   },
   "memo": {
-    "title": null,
-    "subtitle": null
+    "title": "小记",
+    "subtitle": "不值什么，但当时确实发生了。"
   },
   "about": {
     "title": "关于",
-    "subtitle": "这里没什么大事。关于我，几句话说不清，也不必说清，翻翻别的页面就知道了。"
+    "subtitle": "这里没什么大事。"
   }
 }
