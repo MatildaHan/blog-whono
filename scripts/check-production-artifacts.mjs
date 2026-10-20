@@ -297,11 +297,10 @@ export const runProductionArtifactCheck = async (options = {}) => {
   const pageSettings = existsSync('src/data/settings/page.json')
     ? JSON.parse(readFileSync('src/data/settings/page.json', 'utf8'))
     : null;
-  const { site } = await import('../site.config.mjs');
-  const rawAvatar = pageSettings?.bits?.defaultAuthor?.avatar ?? site.authorAvatar ?? 'author/avatar.webp';
+  const rawAvatar = pageSettings?.bits?.defaultAuthor?.avatar ?? 'author/avatar.webp';
   expect(
     typeof rawAvatar === 'string' && rawAvatar.trim().length > 0,
-    'Bits default author avatar is missing from page settings / site config'
+    'Bits default author avatar is missing from page settings'
   );
 
   const normalizedAvatar = rawAvatar.trim().replace(/\\/g, '/').replace(/^\.\/+/, '');
@@ -351,63 +350,54 @@ export const runProductionArtifactCheck = async (options = {}) => {
   const archiveRssLinks = getRssItemLinks(archiveRssXml);
   const essayRssLinks = getRssItemLinks(essayRssXml);
 
-  expect(archiveRssLinks.length > 0, 'Archive RSS does not contain any item links');
-  expect(defaultRssLinks.length > 0, 'Default RSS does not contain any item links');
-  expect(essayRssLinks.length > 0, 'Essay RSS does not contain any item links');
-
-  const sampleArchiveLink = archiveRssLinks[0];
+  const archiveIndex = JSON.parse(readText('dist/archive/index.json'));
+  const expectedArchiveLinks = archiveIndex.map((entry) => `${siteUrl}${basePrefix}/archive/${entry.slug}/`);
   expect(
-    sampleArchiveLink.startsWith(`${siteUrl}${basePrefix}/archive/`),
-    `Archive RSS item link is not absolute or not under /archive/: ${sampleArchiveLink}`
+    JSON.stringify(archiveRssLinks) === JSON.stringify(expectedArchiveLinks),
+    'Archive RSS links do not match the published archive index'
   );
   expect(
-    defaultRssLinks.includes(sampleArchiveLink),
-    `Default RSS is missing archive item link: ${sampleArchiveLink}`
-  );
-  expect(
-    essayRssLinks.includes(sampleArchiveLink),
-    `Essay RSS is missing archive item link: ${sampleArchiveLink}`
-  );
-  expect(
-    sitemapXml.includes(`<loc>${sampleArchiveLink}</loc>`),
-    `Sitemap is missing archive detail link: ${sampleArchiveLink}`
+    JSON.stringify(defaultRssLinks) === JSON.stringify(archiveRssLinks),
+    'Default RSS links do not match archive RSS links'
   );
 
-  const sampleArchiveHtmlPath = normalizeArchiveDetailPath(sampleArchiveLink);
-  const sampleArchiveHtml = readText(sampleArchiveHtmlPath);
-  expect(
-    sampleArchiveHtml.includes(`<link rel="canonical" href="${sampleArchiveLink}"`),
-    `Archive detail page canonical does not match RSS item link: ${sampleArchiveLink}`
-  );
-  expect(
-    sampleArchiveHtml.includes(`<meta property="og:url" content="${sampleArchiveLink}"`),
-    `Archive detail page og:url does not match RSS item link: ${sampleArchiveLink}`
-  );
-  expect(
-    !/\.admin-/.test(sampleArchiveHtml),
-    `Archive detail page still contains admin CSS rules: ${sampleArchiveHtmlPath}`
-  );
-  expect(
-    !/--admin-status-/.test(sampleArchiveHtml),
-    `Archive detail page still contains admin CSS tokens: ${sampleArchiveHtmlPath}`
-  );
+  for (const archiveLink of archiveRssLinks) {
+    expect(
+      essayRssLinks.includes(archiveLink),
+      `Essay RSS is missing archive item link: ${archiveLink}`
+    );
+    expect(
+      sitemapXml.includes(`<loc>${archiveLink}</loc>`),
+      `Sitemap is missing archive detail link: ${archiveLink}`
+    );
+  }
 
-  const latestEssayLink = essayRssLinks[0];
-  const latestEssayHtmlPath = normalizeArchiveDetailPath(latestEssayLink);
-  const latestEssayHtml = readText(latestEssayHtmlPath);
-  expect(
-    !PREV_LINK_PATTERN.test(latestEssayHtml),
-    `Latest essay detail page should not render a prev link: ${latestEssayHtmlPath}`
-  );
-
-  const oldestEssayLink = essayRssLinks.at(-1);
-  expect(oldestEssayLink, 'Essay RSS does not contain an oldest item link');
-  const oldestEssayHtmlPath = normalizeArchiveDetailPath(oldestEssayLink);
-  const oldestEssayHtml = readText(oldestEssayHtmlPath);
-  expect(
-    !NEXT_LINK_PATTERN.test(oldestEssayHtml),
-    `Oldest essay detail page should not render a next link: ${oldestEssayHtmlPath}`
-  );
+  // Empty essay collections are valid after removing demo content.
+  for (const essayLink of essayRssLinks) {
+    expect(
+      essayLink.startsWith(`${siteUrl}${basePrefix}/archive/`),
+      `Essay RSS item link is not absolute or not under /archive/: ${essayLink}`
+    );
+    const essayHtmlPath = normalizeArchiveDetailPath(essayLink);
+    const essayHtml = readText(essayHtmlPath);
+    expect(
+      essayHtml.includes(`<link rel="canonical" href="${essayLink}"`),
+      `Essay detail page canonical does not match RSS item link: ${essayLink}`
+    );
+    expect(
+      essayHtml.includes(`<meta property="og:url" content="${essayLink}"`),
+      `Essay detail page og:url does not match RSS item link: ${essayLink}`
+    );
+    expect(!/\.admin-/.test(essayHtml), `Essay detail page still contains admin CSS rules: ${essayHtmlPath}`);
+    expect(!/--admin-status-/.test(essayHtml), `Essay detail page still contains admin CSS tokens: ${essayHtmlPath}`);
+    if (essayLink === essayRssLinks[0]) {
+      expect(!PREV_LINK_PATTERN.test(essayHtml), `Latest essay should not render a prev link: ${essayHtmlPath}`);
+    }
+    if (essayLink === essayRssLinks.at(-1)) {
+      expect(!NEXT_LINK_PATTERN.test(essayHtml), `Oldest essay should not render a next link: ${essayHtmlPath}`);
+    }
+  }
+  expect(!existsSync('dist/checks'), 'Public test fixture pages should not be generated');
 
   const adminSettingsArtifact = readText('dist/api/admin/settings');
   assertAdminSettingsStaticShell('dist/api/admin/settings', adminSettingsArtifact);

@@ -80,7 +80,7 @@ describe('about directives markdown transform', () => {
   it('renders site-info as a semantic card with generated copy text', async () => {
     const html = await renderAboutMarkdown(
       [
-        '::site-info{name="Whono" url="https://astro.whono.me/" description="一个极简的双栏 Astro 主题" avatar="author/avatar.webp"}'
+        '::site-info{name="测试站点" url="https://site.example/" description="测试站点说明" avatar="author/avatar.webp"}'
       ].join('\n'),
       { base: '/blog/' }
     );
@@ -91,11 +91,11 @@ describe('about directives markdown transform', () => {
     expect(html).not.toContain('about-site-info__eyebrow');
     expect(html).not.toContain('src="/blog/author/avatar.webp"');
     expect(html).toContain('<dt class="about-site-info__field-label">名称</dt>');
-    expect(html).toContain('<dd class="about-site-info__field-value">Whono</dd>');
-    expect(html).toContain('href="https://astro.whono.me/"');
+    expect(html).toContain('<dd class="about-site-info__field-value">测试站点</dd>');
+    expect(html).toContain('href="https://site.example/"');
     expect(html).toContain('data-about-site-info-copy');
-    expect(html).toContain('name: Whono');
-    expect(html).toContain('description: 一个极简的双栏 Astro 主题');
+    expect(html).toContain('name: 测试站点');
+    expect(html).toContain('description: 测试站点说明');
     expect(html).toContain('avatar: author/avatar.webp');
   });
 
@@ -105,7 +105,7 @@ describe('about directives markdown transform', () => {
         ':::faq{question="如何交换友链？"}',
         '请附上站点名称、链接、简介和头像。',
         '',
-        '::site-info{name="Whono" url="https://astro.whono.me/" description="一个极简的双栏 Astro 主题" avatar="https://astro.whono.me/author/avatar.webp"}',
+        '::site-info{name="测试站点" url="https://site.example/" description="测试站点说明" avatar="https://site.example/author/avatar.webp"}',
         ':::'
       ].join('\n')
     );

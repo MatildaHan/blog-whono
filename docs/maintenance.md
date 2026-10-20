@@ -29,7 +29,7 @@ npm run dev
 
 根据任务选择，不要求每次全部运行。
 
-- Markdown 渲染、数学公式、Callout 或图片布局：构建后执行 `npm run check:markdown-smoke`。
+- Markdown 渲染、数学公式、Callout 或图片布局：运行 `npm test -- tests/markdown-pipeline-contract.test.ts tests/markdown-math.test.ts tests/rehype-markdown-math-boundary.test.ts tests/admin-preview.test.ts`，并检查受影响页面。演示文章、测试图片和公开 `/checks/` 页面已移除。
 - 管理内容来源边界：`npm run check:admin-content-source-boundary`，已包含在 `npm run check` 中。
 - 编辑器 emoji 边界：`npm run check:admin-editor-emoji-boundary`。
 - 生产产物与开发管理功能隔离：使用相同的 `SITE_URL` 和子路径环境构建后，执行 `npm run check:prod-artifacts`。

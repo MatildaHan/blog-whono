@@ -192,6 +192,20 @@ describe('admin-console/shared', () => {
     );
   });
 
+  it('allows hidden intro text to stay empty without restoring demo copy', () => {
+    const settings = structuredClone(getEditableThemeSettingsPayload().settings);
+    settings.home.showIntroLead = false;
+    settings.home.showIntroMore = false;
+    settings.home.introLead = '';
+    settings.home.introMore = '';
+    expect(validateAdminThemeSettings(settings)).toEqual([]);
+
+    settings.home.showIntroMore = true;
+    expect(validateAdminThemeSettings(settings)).toEqual([
+      expect.objectContaining({ path: 'home.introMore' })
+    ]);
+  });
+
   it('fills compatibility defaults for legacy admin overview and sidebar action snapshots', () => {
     const canonical = getEditableThemeSettingsPayload().settings;
     const legacySnapshot = structuredClone(canonical) as Record<string, any>;

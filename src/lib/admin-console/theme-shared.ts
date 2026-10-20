@@ -51,7 +51,7 @@ export const ADMIN_SOCIAL_CUSTOM_LIMIT = 8;
 
 export const ADMIN_HERO_PRESETS = ['default', 'none'] as const satisfies readonly HeroPresetId[];
 export const ADMIN_HERO_PRESET_SET: ReadonlySet<HeroPresetId> = new Set(ADMIN_HERO_PRESETS);
-export const ADMIN_HERO_IMAGE_ALT_DEFAULT = 'Whono theme preview';
+export const ADMIN_HERO_IMAGE_ALT_DEFAULT = '首页横幅';
 export const ADMIN_HERO_IMAGE_ALT_MAX_LENGTH = 120;
 
 export const ADMIN_ARTICLE_META_DATE_LABEL_DEFAULT = '发布于：';
@@ -868,7 +868,7 @@ export const validateAdminThemeSettings = (
   if (!settings.shell.brandTitle) pushIssue('shell.brandTitle', '侧栏站点名不能为空');
   if (!settings.shell.quote) pushIssue('shell.quote', '侧栏引用文案不能为空');
 
-  if (!settings.home.introLead) {
+  if (settings.home.showIntroLead && !settings.home.introLead) {
     pushIssue('home.introLead', '首页导语主文案不能为空');
   } else if (settings.home.introLead.length > ADMIN_HOME_INTRO_MAX_LENGTH) {
     pushIssue('home.introLead', `首页导语主文案不能超过 ${ADMIN_HOME_INTRO_MAX_LENGTH} 个字符`);
@@ -878,7 +878,7 @@ export const validateAdminThemeSettings = (
     pushIssue('home.showIntroLead', '首页导语主文案展示开关必须是布尔值');
   }
 
-  if (!settings.home.introMore) {
+  if (settings.home.showIntroMore && !settings.home.introMore) {
     pushIssue('home.introMore', '首页导语补充文案不能为空');
   } else if (settings.home.introMore.length > ADMIN_HOME_INTRO_MAX_LENGTH) {
     pushIssue('home.introMore', `首页导语补充文案不能超过 ${ADMIN_HOME_INTRO_MAX_LENGTH} 个字符`);

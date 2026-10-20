@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { readFile } from 'node:fs/promises';
 
 const createJsonRequest = (url: string, payload: unknown) =>
   new Request(url, {
@@ -201,36 +200,6 @@ describe('admin preview api', () => {
     expect(result.html).toContain(`<h2 data-admin-outline-key="${second!.key}">Same</h2>`);
   });
 
-  it('renders representative existing content structures', async () => {
-    const { renderAdminMarkdownPreview } = await import('../src/lib/admin-console/preview');
-    const { splitMarkdownFrontmatter } = await import('../src/lib/admin-console/frontmatter');
-
-    const markdownGuide = splitMarkdownFrontmatter(
-      await readFile('src/content/essay/markdown-guide.md', 'utf8')
-    ).bodyText;
-    const memo = splitMarkdownFrontmatter(
-      await readFile('tests/fixtures/memo-preview.md', 'utf8')
-    ).bodyText;
-
-    const markdownGuideResult = await renderAdminMarkdownPreview({
-      collection: 'essay',
-      source: markdownGuide
-    });
-    const memoResult = await renderAdminMarkdownPreview({
-      collection: 'memo',
-      source: memo
-    });
-
-    expect(markdownGuideResult.html).toContain('class="callout note"');
-    expect(markdownGuideResult.codeHighlight).toBe('shiki-rehype');
-    expect(markdownGuideResult.html).toContain('class="code-block"');
-    expect(markdownGuideResult.html).toContain('<code class="language-ts">');
-    expect(markdownGuideResult.html).toContain('<figure class="figure">');
-    expect(memoResult.html).toContain('<figure class="figure">');
-    expect(markdownGuideResult.elapsedMs).toBeGreaterThanOrEqual(0);
-    expect(memoResult.elapsedMs).toBeGreaterThanOrEqual(0);
-  });
-
   it('returns structured json errors for invalid inputs', async () => {
     const { POST } = await import('../src/pages/api/admin/preview');
 
@@ -283,7 +252,7 @@ describe('admin preview api', () => {
           ':::faq{question="能编辑吗？"}',
           '可以。',
           '',
-          '::site-info{name="Whono" url="https://astro.whono.me/" description="一个极简的双栏 Astro 主题" avatar="author/avatar.webp"}',
+          '::site-info{name="测试站点" url="https://site.example/" description="测试站点说明" avatar="author/avatar.webp"}',
           ':::',
           '',
           '## 联系',
@@ -312,7 +281,7 @@ describe('admin preview api', () => {
     expect(payload.result.html).toContain('data-about-site-info-copy');
     expect(payload.result.html).toContain('data-about-copy-text=');
     expect(payload.result.html).toContain('<dt class="about-site-info__field-label">名称</dt>');
-    expect(payload.result.html).toContain('<dd class="about-site-info__field-value">Whono</dd>');
+    expect(payload.result.html).toContain('<dd class="about-site-info__field-value">测试站点</dd>');
     expect(payload.result.html).toContain('avatar: author/avatar.webp');
     expect(payload.result.html).not.toContain('about-site-info__avatar');
     expect(payload.result.html).not.toContain('about-site-info__eyebrow');

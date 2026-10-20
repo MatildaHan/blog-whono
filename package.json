@@ -5,12 +5,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cxro/astro-whono.git"
+    "url": "https://github.com/MatildaHan/blog-whono.git"
   },
-  "bugs": {
-    "url": "https://github.com/cxro/astro-whono/issues"
-  },
-  "homepage": "https://astro.whono.me",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"
@@ -26,7 +22,6 @@
     "ci": "npm run verify",
     "ci:core": "npm run verify",
     "audit:prod": "npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org",
-    "check:markdown-smoke": "node ./scripts/check-markdown-smoke.mjs",
     "check:admin-content-source-boundary": "node ./scripts/check-admin-content-source-boundary.mjs",
     "check:admin-editor-emoji-boundary": "node ./scripts/check-admin-editor-emoji-boundary.mjs",
     "check:prod-artifacts": "node ./scripts/check-production-artifacts.mjs",

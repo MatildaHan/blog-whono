@@ -27,7 +27,7 @@ describe('bits card view model', () => {
         { src: 'http://example.com/c.webp', width: 800, height: 600 }
       ],
       author: { name: 'Alice', avatar: 'author/alice.webp' },
-      defaultAuthor: { name: 'Whono', avatar: 'author/default.webp' },
+      defaultAuthor: { name: '测试站点', avatar: 'author/default.webp' },
       base: '/blog/'
     });
 
@@ -57,11 +57,11 @@ describe('bits card view model', () => {
       id: 'demo-bit',
       bodyText: 'Hello',
       author: { name: '', avatar: '' },
-      defaultAuthor: { name: 'Whono', avatar: 'author/default.webp' },
+      defaultAuthor: { name: '测试站点', avatar: 'author/default.webp' },
       base: '/blog/'
     });
 
-    expect(viewModel.authorName).toBe('Whono');
+    expect(viewModel.authorName).toBe('测试站点');
     expect(viewModel.authorAvatar).toBe('/blog/author/default.webp');
   });
 });

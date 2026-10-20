@@ -1,6 +1,6 @@
-# astro-whono
+# blog-whono
 
-一个极简的 Astro 主题。
+使用 Astro 构建的个人博客。
 
 本项目维护仓库：[MatildaHan/blog-whono](https://github.com/MatildaHan/blog-whono)。
 

@@ -107,6 +107,24 @@ describe('theme-settings revision semantics', () => {
     expect(getThemeSettingsReadDiagnostics(resolved)).toEqual([]);
   });
 
+  it('does not restore theme demo identities or links when settings files are absent', async () => {
+    const settingsDir = await createTempSettingsFixture();
+    await Promise.all(['site', 'shell', 'home', 'page'].map((group) =>
+      rm(path.join(settingsDir, `${group}.json`))
+    ));
+
+    const { settings } = getThemeSettings();
+    expect(settings.site.description).toBe('');
+    expect(settings.site.footer.copyright).toBe('');
+    expect(settings.site.socialLinks.resolvedSocialItems).toEqual([]);
+    expect(settings.shell.quote).toBe('');
+    expect(settings.home.introLead).toBe('');
+    expect(settings.home.introMore).toBe('');
+    expect(settings.home.heroImageSrc).toBeNull();
+    expect(settings.page.bits.defaultAuthor.name).toBe('匿名');
+    expect(getEditableThemeSettingsState().ok).toBe(true);
+  });
+
   it('locks the console when an existing settings file would be silently repaired', async () => {
     const settingsDir = await createTempSettingsFixture();
     const sitePath = path.join(settingsDir, 'site.json');

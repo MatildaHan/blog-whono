@@ -1,7 +1,6 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { site as legacySite } from '../../site.config.mjs';
 import { asThemeFontIdForRole, type ThemeFontId } from './fonts/registry';
 import {
   getHeroImageLocalFilePath,
@@ -401,40 +400,19 @@ export const getThemeSettingsRelativePath = (group: ThemeSettingsFileGroup): str
 const THEME_SETTINGS_INVALID_MESSAGE =
   '检测到 settings JSON 配置文件损坏，Theme Console 已停止读取并禁止保存，请先修复对应文件后再重试';
 
-const LEGACY_INTRO_LEAD =
-  '这是一个开源写作主题与示例内容库:包含 随笔/essay、小记/memo、归档/archive 与 絮语/bits，使用与配置请见 README 。';
-const LEGACY_INTRO_MORE = '更多文章请访问';
-const LEGACY_ESSAY_TITLE = '随笔';
-const LEGACY_ARCHIVE_TITLE = '归档';
-const LEGACY_ESSAY_SUBTITLE = '随笔与杂记';
-const LEGACY_BITS_TITLE = '絮语';
-const LEGACY_BITS_SUBTITLE = '生活不只是长篇';
-const LEGACY_ABOUT_TITLE = '关于';
-const LEGACY_QUOTE = 'A minimal Astro theme\nfor essays, notes, and docs.\nDesigned for reading,\nopen-source.';
-const LEGACY_FOOTER_START_YEAR = 2025;
-const LEGACY_FOOTER_SHOW_CURRENT_YEAR = true;
-const LEGACY_FOOTER_COPYRIGHT = 'Whono · Theme Demo · by cxro';
 const DEFAULT_PRESET_SOCIAL_ORDER: SiteSocialPresetOrder = {
   github: 1,
   x: 2,
   email: 3
 };
-const LEGACY_SOCIAL_LINKS: SiteSocialLinks = {
-  github: 'https://github.com/cxro/astro-whono',
-  x: 'https://twitter.com/yourname',
-  email: 'Whono@linux.do',
-  presetOrder: { ...DEFAULT_PRESET_SOCIAL_ORDER },
-  custom: [],
-  resolvedSocialItems: []
-};
-const LEGACY_NAV: SidebarNavItem[] = [
+const DEFAULT_NAV: SidebarNavItem[] = [
   { id: 'essay', label: '随笔', ornament: ADMIN_NAV_ORNAMENT_DEFAULT, visible: true, order: 1 },
   { id: 'bits', label: '絮语', ornament: ADMIN_NAV_ORNAMENT_DEFAULT, visible: true, order: 2 },
   { id: 'memo', label: '纪年', ornament: ADMIN_NAV_ORNAMENT_DEFAULT, visible: true, order: 3 },
   { id: 'archive', label: '归档', ornament: ADMIN_NAV_ORNAMENT_DEFAULT, visible: true, order: 4 },
   { id: 'about', label: '关于', ornament: ADMIN_NAV_ORNAMENT_DEFAULT, visible: true, order: 5 }
 ];
-const LEGACY_NAV_ORDER = new Map<SidebarNavId, number>(LEGACY_NAV.map((item) => [item.id, item.order]));
+const DEFAULT_NAV_ORDER = new Map<SidebarNavId, number>(DEFAULT_NAV.map((item) => [item.id, item.order]));
 
 const cloneNavItems = (items: readonly SidebarNavItem[]): SidebarNavItem[] =>
   items.map((item) => ({ ...item }));
@@ -464,13 +442,13 @@ const cloneThemeSettingsReadDiagnostics = (
 ): ThemeSettingsReadDiagnostic[] => diagnostics.map((diagnostic) => ({ ...diagnostic }));
 
 const DEFAULT_SITE: SiteSettings = {
-  title: 'Whono',
-  description: '一个 Astro 主题的展示站：轻量、可维护、可复用。',
+  title: '站点',
+  description: '',
   defaultLocale: 'zh-CN',
   footer: {
-    startYear: LEGACY_FOOTER_START_YEAR,
-    showCurrentYear: LEGACY_FOOTER_SHOW_CURRENT_YEAR,
-    copyright: LEGACY_FOOTER_COPYRIGHT
+    startYear: getAdminFooterStartYearMax(),
+    showCurrentYear: true,
+    copyright: ''
   },
   adminOverview: {
     publicVisible: true,
@@ -492,14 +470,14 @@ const DEFAULT_SITE: SiteSettings = {
 };
 
 const DEFAULT_SHELL: ShellSettings = {
-  brandTitle: 'Whono',
-  quote: LEGACY_QUOTE,
-  nav: cloneNavItems(LEGACY_NAV)
+  brandTitle: '站点',
+  quote: '',
+  nav: cloneNavItems(DEFAULT_NAV)
 };
 
 const DEFAULT_HOME: HomeSettings = {
-  introLead: LEGACY_INTRO_LEAD,
-  introMore: LEGACY_INTRO_MORE,
+  introLead: '',
+  introMore: '',
   introMoreLinks: cloneHomeIntroLinks(ADMIN_HOME_INTRO_LINK_DEFAULT),
   showIntroLead: true,
   showIntroMore: true,
@@ -510,18 +488,18 @@ const DEFAULT_HOME: HomeSettings = {
 
 const DEFAULT_PAGE: PageSettings = {
   essay: {
-    title: LEGACY_ESSAY_TITLE,
-    subtitle: LEGACY_ESSAY_SUBTITLE
+    title: '随笔',
+    subtitle: null
   },
   archive: {
-    title: LEGACY_ARCHIVE_TITLE,
-    subtitle: '按年份分组的归档目录'
+    title: '归档',
+    subtitle: null
   },
   bits: {
-    title: LEGACY_BITS_TITLE,
-    subtitle: LEGACY_BITS_SUBTITLE,
+    title: '絮语',
+    subtitle: null,
     defaultAuthor: {
-      name: 'Whono',
+      name: '匿名',
       avatar: 'author/avatar.webp'
     }
   },
@@ -530,7 +508,7 @@ const DEFAULT_PAGE: PageSettings = {
     subtitle: null
   },
   about: {
-    title: LEGACY_ABOUT_TITLE,
+    title: '关于',
     subtitle: null
   }
 };
@@ -956,7 +934,7 @@ const normalizeSidebarNavItems = (items: readonly SidebarNavItem[]): SidebarNavI
     order: claimAvailableOrder(
       usedOrders,
       item.order,
-      LEGACY_NAV_ORDER.get(item.id) ?? ADMIN_NAV_IDS.indexOf(item.id) + 1,
+      DEFAULT_NAV_ORDER.get(item.id) ?? ADMIN_NAV_IDS.indexOf(item.id) + 1,
       isAdminNavOrderValue,
       ADMIN_NAV_ORDER_MIN,
       ADMIN_NAV_ORDER_MAX
@@ -1021,7 +999,7 @@ const parseSidebarNav = (value: unknown): SidebarNavItem[] | undefined => {
   if (!Array.isArray(value)) return undefined;
 
   const merged = new Map<SidebarNavId, SidebarNavItem>(
-    LEGACY_NAV.map((item) => [item.id, { ...item }])
+    DEFAULT_NAV.map((item) => [item.id, { ...item }])
   );
   let hasOverride = false;
 
@@ -1170,12 +1148,12 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
 
   const title = resolveValue(
     asNonEmptyString(siteJson?.title),
-    asNonEmptyString(legacySite.title),
+    undefined,
     DEFAULT_SITE.title
   );
   const description = resolveValue(
     asNonEmptyString(siteJson?.description),
-    asNonEmptyString(legacySite.description),
+    undefined,
     DEFAULT_SITE.description
   );
   const defaultLocale = resolveValue(
@@ -1185,17 +1163,17 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
   );
   const footerCopyright = resolveValue(
     asNonEmptyString(siteFooterJson?.copyright),
-    LEGACY_FOOTER_COPYRIGHT,
+    undefined,
     DEFAULT_SITE.footer.copyright
   );
   const footerStartYear = resolveValue(
     asFooterStartYear(siteFooterJson?.startYear),
-    LEGACY_FOOTER_START_YEAR,
+    undefined,
     DEFAULT_SITE.footer.startYear
   );
   const footerShowCurrentYear = resolveValue(
     asBoolean(siteFooterJson?.showCurrentYear),
-    LEGACY_FOOTER_SHOW_CURRENT_YEAR,
+    undefined,
     DEFAULT_SITE.footer.showCurrentYear
   );
   const adminOverviewPublicVisible = resolveValue(
@@ -1225,32 +1203,32 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
   );
   const socialLinksGithub = resolveValue(
     asHttpsUrl(siteSocialLinksJson?.github, GITHUB_HOSTS),
-    LEGACY_SOCIAL_LINKS.github,
+    undefined,
     DEFAULT_SITE.socialLinks.github
   );
   const socialLinksX = resolveValue(
     asHttpsUrl(siteSocialLinksJson?.x, X_HOSTS),
-    LEGACY_SOCIAL_LINKS.x,
+    undefined,
     DEFAULT_SITE.socialLinks.x
   );
   const socialLinksEmail = resolveValue(
     asEmailAddress(siteSocialLinksJson?.email),
-    LEGACY_SOCIAL_LINKS.email,
+    undefined,
     DEFAULT_SITE.socialLinks.email
   );
   const socialLinksGithubOrder = resolveValue(
     asPresetSocialOrderValue(siteSocialPresetOrderJson?.github),
-    LEGACY_SOCIAL_LINKS.presetOrder.github,
+    undefined,
     DEFAULT_SITE.socialLinks.presetOrder.github
   );
   const socialLinksXOrder = resolveValue(
     asPresetSocialOrderValue(siteSocialPresetOrderJson?.x),
-    LEGACY_SOCIAL_LINKS.presetOrder.x,
+    undefined,
     DEFAULT_SITE.socialLinks.presetOrder.x
   );
   const socialLinksEmailOrder = resolveValue(
     asPresetSocialOrderValue(siteSocialPresetOrderJson?.email),
-    LEGACY_SOCIAL_LINKS.presetOrder.email,
+    undefined,
     DEFAULT_SITE.socialLinks.presetOrder.email
   );
   const socialLinksCustom = resolveValue(
@@ -1261,28 +1239,28 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
 
   const brandTitle = resolveValue(
     asNonEmptyString(shellJson?.brandTitle),
-    asNonEmptyString(legacySite.brandTitle),
+    undefined,
     DEFAULT_SHELL.brandTitle
   );
   const quote = resolveValue(
     asNonEmptyString(shellJson?.quote),
-    LEGACY_QUOTE,
+    undefined,
     DEFAULT_SHELL.quote
   );
   const nav = resolveValue(
     parseSidebarNav(shellJson?.nav),
-    cloneNavItems(LEGACY_NAV),
+    cloneNavItems(DEFAULT_NAV),
     cloneNavItems(DEFAULT_SHELL.nav)
   );
 
   const introLead = resolveValue(
     asNonEmptyString(homeJson?.introLead),
-    LEGACY_INTRO_LEAD,
+    undefined,
     DEFAULT_HOME.introLead
   );
   const introMore = resolveValue(
     asNonEmptyString(homeJson?.introMore),
-    LEGACY_INTRO_MORE,
+    undefined,
     DEFAULT_HOME.introMore
   );
   const introMoreLinks = resolveValue(
@@ -1323,7 +1301,7 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
   );
   const essaySubtitle = resolveValue(
     asNullableString(pageEssayJson?.subtitle),
-    LEGACY_ESSAY_SUBTITLE,
+    undefined,
     DEFAULT_PAGE.essay.subtitle
   );
   const archiveTitle = resolveValue(
@@ -1343,17 +1321,17 @@ export const getThemeSettings = (): ThemeSettingsResolved => {
   );
   const bitsSubtitle = resolveValue(
     asNullableString(pageBitsJson?.subtitle),
-    LEGACY_BITS_SUBTITLE,
+    undefined,
     DEFAULT_PAGE.bits.subtitle
   );
   const bitsDefaultAuthorName = resolveValue(
     asNonEmptyString(pageBitsDefaultAuthorJson?.name),
-    asNonEmptyString(legacySite.author),
+    undefined,
     DEFAULT_PAGE.bits.defaultAuthor.name
   );
   const bitsDefaultAuthorAvatar = resolveValue(
     asBitsAvatarPath(pageBitsDefaultAuthorJson?.avatar),
-    asBitsAvatarPath(legacySite.authorAvatar),
+    undefined,
     DEFAULT_PAGE.bits.defaultAuthor.avatar
   );
   const memoSubtitle = resolveValue<string | null>(
