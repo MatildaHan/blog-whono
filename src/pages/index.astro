@@ -35,7 +35,7 @@ const resolvedIntroMoreLinks = (introMoreLinks.length ? introMoreLinks : [...ADM
   (linkKey) => getAdminHomeIntroLinkOption(linkKey)
 );
 
-const latest = (await getVisibleEssays()).slice(0, 12);
+const latest = (await getVisibleEssays()).slice(0, 1);
 
 type HomeHeadCriticalFontFace = {
   family: 'LXGW WenKai Lite' | 'Noto Serif SC';
@@ -375,19 +375,13 @@ body[data-reading="immersive"] .reader-toggle .icon-book-open {
   letter-spacing: 0.02em;
 }
 
-.section-title {
-  font-size: 20px;
-  margin: 28px 0 2px;
-  position: relative;
-}
-
-.section-title::after {
-  content: "";
-  display: block;
+.home-separator {
   width: 32px;
   height: 1px;
+  flex-shrink: 0;
+  border: 0;
   background: var(--border);
-  margin-top: 6px;
+  margin: 4px 0 2px 14px;
 }
 
 .list {
@@ -429,15 +423,15 @@ body[data-reading="immersive"] .reader-toggle .icon-book-open {
 }
 
 /* Keep above-the-fold EntryListItem copy stable until the deferred global stylesheet arrives. */
-.list-item__excerpt {
+.home .list-item__excerpt {
   margin: 10px 0 0;
   color: #666;
   font-size: 15px;
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
   font-family: var(--font-copy);
 }
@@ -693,7 +687,7 @@ body[data-reading="immersive"] .reader-toggle .icon-book-open {
     )
   }
 
-  <h2 class="section-title section-title--index">索引</h2>
+  <hr class="home-separator" />
 
   <div class="list">
     {latest.map((entry) => {
@@ -705,6 +699,7 @@ body[data-reading="immersive"] .reader-toggle .icon-book-open {
           href={href}
           title={entry.data.title}
           date={entry.data.date}
+          publishedAt={entry.data.publishedAt}
           updatedAt={entry.data.updatedAt}
           visibleTags={visibleTags}
           articleMetaSettings={articleMeta}

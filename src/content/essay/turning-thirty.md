@@ -2,6 +2,7 @@
 title: "写给三十岁以后的自己"
 description: "愿往后的日子，有照顾自己的耐心，也有重新出发的勇气。"
 date: "2026-10-20"
+publishedAt: "2026-10-20T20:46:27+08:00"
 tags: ["生活", "三十岁"]
 draft: false
 archive: true
