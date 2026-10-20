@@ -1,9 +1,9 @@
 {
-  "introLead": "这是一个开源写作主题与示例内容库:包含 随笔/essay、小记/memo、归档/archive 与 絮语/bits，使用与配置请见 README 。",
-  "introMore": "更多文章请访问",
+  "introLead": "没什么重要的。不过是一些日常的、琐碎的、日后想起来会有点美好透着光的东西。记下来，不为别的，只因为岁月漫长，总得有点什么撑着。",
+  "introMore": "",
   "introMoreLinks": [
-    "archive",
-    "tag"
+    "",
+    ""
   ],
   "showIntroLead": true,
   "showIntroMore": true,
