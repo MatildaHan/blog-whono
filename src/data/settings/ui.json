@@ -6,7 +6,7 @@
     "showEntry": true
   },
   "sidebarActions": {
-    "showRssLink": true,
+    "showRssLink": false,
     "showThemeToggle": true,
     "showAdminEntry": false
   },
