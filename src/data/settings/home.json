@@ -5,9 +5,9 @@
     "",
     ""
   ],
-  "showIntroLead": true,
-  "showIntroMore": true,
-  "heroPresetId": "default",
-  "heroImageSrc": null,
-  "heroImageAlt": "Whono theme preview"
+  "showIntroLead": false,
+  "showIntroMore": false,
+  "heroPresetId": "custom",
+  "heroImageSrc": "/images/banner.webp",
+  "heroImageAlt": "首页横幅", 
 }
