@@ -1,6 +1,7 @@
 ---
 import { formatISODateUtc } from '../utils/format';
 import type { ArticleMetaSettings } from '../lib/theme-settings';
+import TagLink from './TagLink.astro';
 
 const {
   href,
@@ -29,16 +30,15 @@ const displayDate = updatedAt ?? date;
 const displayDateLabel = updatedAt ? '更新于：' : (articleMetaSettings.dateLabel ?? '');
 ---
 
-<a
+<article
   class="list-item list-item--link"
-  href={href}
   data-entry-item
   data-slug={slug || undefined}
 >
   <div class="list-item__row">
     <div style="display:flex; align-items:center; gap:10px; min-width:0;">
       <span class="badge">{displayBadge}</span>
-      <h2 class="list-item__title" style="margin:0; min-width:0;">{title}</h2>
+      <h2 class="list-item__title" style="margin:0; min-width:0;"><a class="list-item__link" href={href}>{title}</a></h2>
     </div>
   </div>
   {excerpt ? <p class="list-item__excerpt">{excerpt}</p> : null}
@@ -51,9 +51,9 @@ const displayDateLabel = updatedAt ? '更新于：' : (articleMetaSettings.dateL
       ) : null}
       {articleMetaSettings.showTags && visibleTags.length ? (
         <span class="meta-line__item meta-line__item--tags">
-          {visibleTags.map((tag) => (<span class="tag">#{tag}</span>))}
+          {visibleTags.map((tag) => (<TagLink tag={tag} />))}
         </span>
       ) : null}
     </div>
   ) : null}
-</a>
+</article>

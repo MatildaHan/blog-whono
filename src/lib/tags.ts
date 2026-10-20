@@ -134,3 +134,8 @@ export function getTagPath(scope: TagScope, rawKey: string, page = 1): string {
   if (!isRoutableTagKey(key)) return `/${scope}/`;
   return page <= 1 ? `/${scope}/tag/${key}/` : `/${scope}/tag/${key}/page/${page}/`;
 }
+
+export function getTagSearchPath(label: string): string | null {
+  const key = toTagKey(label);
+  return isRoutableTagKey(key) ? `/tags/${encodeURIComponent(key)}/` : null;
+}

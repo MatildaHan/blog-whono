@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TagFilterHeader from './TagFilterHeader.astro';
+import TagLink from './TagLink.astro';
 import { createWithBase, getEssaySlug, type EssayEntry } from '../lib/content';
 import { getTagPath, type TagSummary } from '../lib/tags';
 import { getThemeSettings } from '../lib/theme-settings';
@@ -108,7 +109,7 @@ const currentTagState = currentTag
                   <span class="archive-date-md">{formatMonthDayUtc(entry.data.date)}</span>
                   <span class="archive-date-full">{formatISODateUtc(entry.data.date)}</span>
                 </div>
-                {tag ? <div class="archive-tag">#{tag}</div> : null}
+                {tag ? <div class="archive-tag"><TagLink tag={tag} /></div> : null}
               </div>
             </div>
           );

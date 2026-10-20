@@ -5,10 +5,12 @@ import {
   findTagSummary,
   getTagKeys,
   getTagPath,
+  getTagSearchPath,
   isRoutableTagKey,
   normalizeTagLabel,
   toTagKey
 } from '../src/lib/tags';
+import { createWithBase } from '../src/utils/format';
 
 describe('tags', () => {
   it('normalizes labels and keys', () => {
@@ -62,5 +64,24 @@ describe('tags', () => {
     expect(getTagPath('archive', 'Astro Build')).toBe('/archive/tag/astro-build/');
     expect(getTagPath('archive', 'Astro Build', 3)).toBe('/archive/tag/astro-build/page/3/');
     expect(getTagPath('archive', '???')).toBe('/archive/');
+  });
+
+  it('links essay and bits labels to the same encoded search route, including base paths', () => {
+    expect(getTagSearchPath('  Astro　Build ')).toBe(getTagSearchPath('astro build'));
+    expect(getTagSearchPath('生活')).toBe('/tags/%E7%94%9F%E6%B4%BB/');
+    expect(getTagSearchPath('loc:北京')).toBe('/tags/loc%3A%E5%8C%97%E4%BA%AC/');
+    expect(createWithBase('/blog/')(getTagSearchPath('生活')!)).toBe('/blog/tags/%E7%94%9F%E6%B4%BB/');
+    expect(getTagSearchPath('???')).toBeNull();
+    expect(getTagSearchPath('..')).toBeNull();
+  });
+
+  it('combines shared labels and keeps exact tag matches across both content types', () => {
+    const entries = [
+      { id: 'essay', data: { tags: ['生活', '生活'] } },
+      { id: 'bit', data: { tags: ['生活'] } },
+      { id: 'another-bit', data: { tags: ['生活方式'] } }
+    ];
+    expect(collectTagSummary(entries).find((tag) => tag.key === '生活')?.count).toBe(2);
+    expect(filterEntriesByTag(entries, '生活').map((entry) => entry.id)).toEqual(['essay', 'bit']);
   });
 });

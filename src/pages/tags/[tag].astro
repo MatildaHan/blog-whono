@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TagLink from '../../components/TagLink.astro';
+import UiIcon from '../../components/UiIcon.astro';
+import { createWithBase, getEssayDerivedText, getEssaySlug, getVisibleEssays } from '../../lib/content';
+import { getBitsSearchIndex } from '../../lib/bits';
+import { collectTagSummary, getTagKeys, getTagSearchPath } from '../../lib/tags';
+import { getThemeSettings } from '../../lib/theme-settings';
+import { formatISODateUtc } from '../../utils/format';
+import { PAGE_SIZE_BITS } from '../../../site.config.mjs';
+import '../../styles/tag-results.css';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const [essays, bits] = await Promise.all([getVisibleEssays(), getBitsSearchIndex(PAGE_SIZE_BITS)]);
+  const withBase = createWithBase(import.meta.env.BASE_URL ?? '/');
+  const items = [
+    ...essays.map((entry) => ({
+      kind: 'essay',
+      title: entry.data.title,
+      excerpt: getEssayDerivedText(entry).excerpt,
+      text: getEssayDerivedText(entry).plainText,
+      tags: entry.data.tags ?? [],
+      date: entry.data.date.toISOString(),
+      dateLabel: formatISODateUtc(entry.data.date),
+      href: withBase(`/archive/${getEssaySlug(entry)}/`)
+    })),
+    ...bits.map((bit) => ({
+      kind: 'bits',
+      title: bit.title || bit.description || '一则絮语',
+      excerpt: bit.excerpt,
+      text: bit.text,
+      tags: bit.tags,
+      date: bit.date ?? '',
+      dateLabel: bit.dateLabel ?? '',
+      href: bit.href
+    }))
+  ].sort((a, b) => b.date.localeCompare(a.date) || a.href.localeCompare(b.href));
+  const tagSummaries = collectTagSummary(items.map((item) => ({
+    data: { tags: item.tags.filter((tag) => getTagSearchPath(tag) !== null) }
+  })));
+  return tagSummaries.map((currentTag) => ({
+    params: { tag: currentTag.key },
+    props: { currentTag, tagSummaries, items: items.filter((item) => getTagKeys(item.tags).includes(currentTag.key)) }
+  }));
+}
+
+const { currentTag, tagSummaries, items } = Astro.props;
+const { settings } = getThemeSettings();
+const essayLabel = settings.page.essay.title || '随笔';
+const bitsLabel = settings.page.bits.title || '絮语';
+const scopes = [
+  { key: 'all', label: '全部', count: items.length },
+  { key: 'essay', label: essayLabel, count: items.filter((item) => item.kind === 'essay').length },
+  { key: 'bits', label: bitsLabel, count: items.filter((item) => item.kind === 'bits').length }
+];
+const otherTags = tagSummaries.filter((tag) => tag.key !== currentTag.key);
+const displayTag = currentTag.label.replace(/^loc:/i, '');
+---
+
+<BaseLayout title={`#${displayTag} · 标签搜索`} description={`与 #${displayTag} 有关的随笔与絮语，共 ${items.length} 条记录。`} bodyClass="tag-results-page">
+  <header class="tag-results-heading">
+    <p class="tag-results-eyebrow"><UiIcon name="tag" size={14} /> 标签检索</p>
+    <h1 class="tag-results-title"><span>#</span>{displayTag}</h1>
+    <p class="tag-results-intro">散落在文字里的同一个话题。</p>
+    <p class="tag-results-total">共 <strong>{items.length}</strong> 条记录 <span aria-hidden="true">·</span> 按时间由近及远</p>
+  </header>
+
+  <section data-tag-results aria-label={`标签 ${displayTag} 的搜索结果`}>
+    <div class="tag-results-search" data-tag-client hidden>
+      <UiIcon name="search" size={18} />
+      <label class="sr-only" for="tag-result-query">在当前标签内搜索</label>
+      <input id="tag-result-query" type="search" placeholder="在这个话题里再找找…" autocomplete="off" />
+      <button type="button" data-tag-reset hidden>清除</button>
+    </div>
+    <div class="tag-results-toolbar" data-tag-client hidden>
+      <div class="tag-results-scopes" role="group" aria-label="内容类型">
+        {scopes.map((scope) => (
+          <button type="button" data-tag-scope={scope.key} aria-pressed={scope.key === 'all' ? 'true' : 'false'}>
+            {scope.label}<span>{scope.count}</span>
+          </button>
+        ))}
+      </div>
+      <p data-tag-summary role="status" aria-live="polite">{items.length} 条结果</p>
+    </div>
+    <div class="tag-results-list">
+      {items.map((item) => (
+        <article class="tag-result" data-tag-result data-kind={item.kind} data-search={[item.title, item.text, ...item.tags].join(' ')}>
+          <div class="tag-result-meta"><span>{item.kind === 'essay' ? essayLabel : bitsLabel}</span><span aria-hidden="true">·</span><time datetime={item.date}>{item.dateLabel}</time></div>
+          <h2><a class="tag-result-title-link" href={item.href}>{item.title}</a></h2>
+          {item.excerpt ? <p class="tag-result-excerpt">{item.excerpt}</p> : null}
+          <div class="tag-result-tags">{item.tags.map((tag) => <TagLink tag={tag} label={`#${tag.replace(/^loc:/i, '')}`} />)}</div>
+        </article>
+      ))}
+    </div>
+    <div class="tag-results-empty" data-tag-empty hidden>
+      <UiIcon name="search" size={28} />
+      <h2>还没找到这段文字</h2>
+      <p>换个词，或看看这个标签下的其他记录。</p>
+      <button type="button" data-tag-show-all>查看全部记录</button>
+    </div>
+    <noscript><p class="tag-results-total">当前显示这个标签下的全部记录。</p></noscript>
+  </section>
+
+  {otherTags.length ? (
+    <aside class="tag-results-explore" aria-label="浏览其他标签">
+      <h2>沿着标签，再逛一会儿</h2>
+      <div>{otherTags.map((tag) => <span><TagLink tag={tag.label} label={`#${tag.label.replace(/^loc:/i, '')}`} /><small>{tag.count}</small></span>)}</div>
+    </aside>
+  ) : null}
+  <script>
+    import '../../scripts/tag-results';
+  </script>
+</BaseLayout>
