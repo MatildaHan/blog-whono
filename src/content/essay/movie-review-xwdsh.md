@@ -2,7 +2,7 @@
 title: "欣赏与热爱"
 description: "生活只是一种态度"
 date: "2026-10-22"
-publishedAt: "2026-12-31T23:59:59+08:00"
+publishedAt: "2026-10-22T11:40:00+08:00"
 tags: [ "观后感"]
 draft: false
 archive: true
