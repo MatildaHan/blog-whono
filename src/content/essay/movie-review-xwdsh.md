@@ -6,7 +6,7 @@ publishedAt: "2026-12-31T23:59:59+08:00"
 tags: [ "观后感"]
 draft: false
 archive: true
-slug: "Movie-review-xwdsh"
+slug: "movie-review-xwdsh"
 ---
 
 
