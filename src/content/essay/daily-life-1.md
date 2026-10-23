@@ -1,7 +1,7 @@
 ---
 title: "今日霜降"
 description: "啦啦啦啦啦啦啦啦"
-date: "2026-10-22"
+date: "2026-10-23"
 publishedAt: "2026-10-23T17:41:00+08:00"
 tags: [ "生活记录"]
 draft: false
