@@ -5,7 +5,7 @@ vi.mock('astro:content', () => ({
 }));
 
 import { getCollection } from 'astro:content';
-import { getBitsSearchIndex } from '../src/lib/bits';
+import { getBitsSearchIndex, getSortedBits } from '../src/lib/bits';
 import { buildPublishedBitsHrefMap, type BitPublicOrderItem } from '../src/lib/bits-public-routing';
 
 const getCollectionMock = vi.mocked(getCollection);
@@ -55,5 +55,23 @@ describe('bits queries', () => {
     expect(await getBitsSearchIndex(20)).toEqual([
       expect.objectContaining({ dateLabel: '2026-01-01 00:30:00', year: 2026 })
     ]);
+  });
+
+  it('counts published bits across all pages without including drafts', async () => {
+    const entries = Array.from({ length: 25 }, (_, index) =>
+      bit(`published-${index}`, '2026-10-28T10:00:00+08:00')
+    );
+    const draft = bit('draft', '2026-10-29T10:00:00+08:00');
+    draft.data.draft = true;
+    entries.push(draft);
+    getCollectionMock.mockImplementation(async (_name, filter) => {
+      const predicate = filter as ((entry: ReturnType<typeof bit>) => boolean) | undefined;
+      return entries.filter((entry) => !predicate || predicate(entry)) as never;
+    });
+
+    const published = await getSortedBits({ includeDraft: false });
+
+    expect(published).toHaveLength(25);
+    expect(published.some((entry) => entry.data.draft)).toBe(false);
   });
 });

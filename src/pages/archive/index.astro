@@ -1,15 +1,20 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEssayStats, getVisibleEssays } from '../../lib/content';
+import { getSortedBits } from '../../lib/bits';
 import { getThemeSettings } from '../../lib/theme-settings';
 import '../../styles/statistics.css';
 
-const essays = await getVisibleEssays({ includeDraft: false });
+const [essays, bits] = await Promise.all([
+  getVisibleEssays({ includeDraft: false }),
+  getSortedBits({ includeDraft: false })
+]);
 const { articleCount, wordCount } = getEssayStats(essays);
+const bitsCount = bits.length;
 const { settings: { page } } = getThemeSettings();
 const pageTitle = page.archive.title || '统计';
 const numberFormatter = new Intl.NumberFormat('zh-CN');
-const description = `本站一共发布了 ${articleCount} 篇文章，共计 ${numberFormatter.format(wordCount)} 字。`;
+const description = `本站一共发布了 ${articleCount} 篇文章，共计 ${numberFormatter.format(wordCount)} 字；另有 ${bitsCount} 篇絮语。`;
 ---
 
 <BaseLayout title={pageTitle} description={description} activeNavId="archive">
@@ -19,5 +24,6 @@ const description = `本站一共发布了 ${articleCount} 篇文章，共计 ${
   <p class="site-statistics">
     <span>本站一共发布了 <strong data-stat-articles>{numberFormatter.format(articleCount)}</strong> 篇文章，</span>
     <span>共计 <strong data-stat-words>{numberFormatter.format(wordCount)}</strong> 字。</span>
+    <span>另有 <strong data-stat-bits>{numberFormatter.format(bitsCount)}</strong> 篇絮语。</span>
   </p>
 </BaseLayout>
