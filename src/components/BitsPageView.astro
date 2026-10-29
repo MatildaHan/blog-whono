@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import BitCard from './BitCard.astro';
 import Lightbox from './Lightbox.astro';
 import '../styles/bits-page.css';
-import { MAX_PRIMARY_BITS_FILTER_YEARS, getBitsDerivedText, type BitsEntry, type BitsYearOption } from '../lib/bits';
+import { MAX_PRIMARY_BITS_FILTER_YEARS, type BitsEntry, type BitsYearOption } from '../lib/bits';
 import { containsMarkdownMath } from '../lib/markdown-math';
 import {
   MARKDOWN_MATH_STYLESHEET_DATA_ATTR,
@@ -61,12 +61,8 @@ const priorityMediaBitId = items.find((bit) => (bit.data.images?.length ?? 0) > 
 
 const cards = await Promise.all(
   items.map(async (bit) => {
-    const derivedText = getBitsDerivedText(bit);
-    if (derivedText.shouldRenderFull) {
-      const { Content } = await render(bit);
-      return { bit, excerpt: '', Content, hasMath: containsMarkdownMath(bit.body ?? '') };
-    }
-    return { bit, excerpt: derivedText.excerpt, Content: null, hasMath: false };
+    const { Content } = await render(bit);
+    return { bit, Content, hasMath: containsMarkdownMath(bit.body ?? '') };
   })
 );
 const hasRenderedMath = cards.some((card) => card.hasMath);
@@ -172,8 +168,8 @@ const katexStylesheetAttrs = { [MARKDOWN_MATH_STYLESHEET_DATA_ATTR]: 'true' };
 
   <div data-bits-browse>
     <div id="bits-list">
-      {cards.map(({ bit, excerpt, Content }) => (
-        <BitCard bit={bit} excerpt={excerpt} Content={Content} prioritizeLeadMedia={bit.id === priorityMediaBitId} />
+      {cards.map(({ bit, Content }) => (
+        <BitCard bit={bit} Content={Content} prioritizeLeadMedia={bit.id === priorityMediaBitId} />
       ))}
     </div>
 

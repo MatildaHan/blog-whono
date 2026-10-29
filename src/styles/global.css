@@ -189,6 +189,13 @@ html {
   text-size-adjust: 100%;
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
 time,
 .page-meta,
 .list-item__meta,

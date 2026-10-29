@@ -91,6 +91,12 @@
 
 .bit-body {
   font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.bit-body :is(pre, table) {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .bit-media {

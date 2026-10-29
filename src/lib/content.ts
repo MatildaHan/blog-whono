@@ -210,6 +210,16 @@ export function getEssayDerivedText(entry: EssayEntry): EssayDerivedText {
   return derivedText;
 }
 
+// Match article-page counts: published essay body text, without whitespace.
+export function getEssayStats(entries: readonly EssayEntry[]) {
+  return entries.reduce((stats, entry) => {
+    if (entry.data.draft === true) return stats;
+    stats.articleCount += 1;
+    stats.wordCount += getEssayDerivedText(entry).plainText.replace(/\s+/g, '').length;
+    return stats;
+  }, { articleCount: 0, wordCount: 0 });
+}
+
 const buildMemoDerivedText = (entry: MemoEntry): MemoDerivedText =>
   deriveMarkdownText(entry.body ?? '');
 

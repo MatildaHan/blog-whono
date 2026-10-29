@@ -41,7 +41,7 @@ const ogImage = coverImage ?? defaultImage;
 const derivedText = getEssayDerivedText(entry);
 const rawDescription = entry?.data?.description?.trim?.() ?? '';
 const description = rawDescription || truncateText(derivedText.excerpt, 90);
-const activeNavId: SidebarNavId = entry?.data?.archive === false ? 'essay' : 'archive';
+const activeNavId: SidebarNavId = 'essay';
 const hasMath = containsMarkdownMath(entry.body ?? '');
 const katexStylesheetAttrs = { [MARKDOWN_MATH_STYLESHEET_DATA_ATTR]: 'true' };
 const updatedAt = entry.data.updatedAt ?? null;

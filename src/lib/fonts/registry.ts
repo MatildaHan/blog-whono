@@ -72,7 +72,7 @@ export const THEME_FONT_REGISTRY = [
     label: '思源宋体（Noto Serif SC）',
     cardLabel: '思源宋体',
     badge: '自托管子集',
-    roles: ['readable', 'brand'],
+    roles: ['readable', 'copy', 'mono', 'brand'],
     acquisition: 'subset-pipeline',
     provider: null,
     familyName: 'Noto Serif SC',

@@ -22,8 +22,8 @@
   },
   "typography": {
     "readable": "noto-serif-sc",
-    "copy": "lxgw-wenkai-lite",
-    "mono": "system-mono",
-    "brand": "serif-georgia"
+    "copy": "noto-serif-sc",
+    "mono": "noto-serif-sc",
+    "brand": "noto-serif-sc"
   }
 }

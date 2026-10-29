@@ -18,7 +18,7 @@
     },
     {
       "id": "archive",
-      "label": "归档",
+      "label": "统计",
       "ornament": "·",
       "visible": true,
       "order": 3

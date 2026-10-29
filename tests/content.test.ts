@@ -8,7 +8,7 @@ vi.mock('astro:content', () => ({
 }));
 
 import { getCollection } from 'astro:content';
-import { getPublished, getSortedEssays } from '../src/lib/content';
+import { getEssayStats, getPublished, getSortedEssays, type EssayEntry } from '../src/lib/content';
 
 const getCollectionMock = vi.mocked(getCollection);
 
@@ -61,5 +61,23 @@ describe('content queries', () => {
     const entries = await getSortedEssays({ includeDraft: true });
 
     expect(entries.map((entry) => entry.id)).toEqual(['evening', 'morning', 'early-morning', 'date-only', 'previous-day']);
+  });
+
+  it('counts published essay body text beyond excerpt markers and includes unlisted articles', () => {
+    const entries = [
+      {
+        id: 'published',
+        data: { draft: false },
+        body: '## 正文\n\n你好 世界。\n\n<!-- more -->\n\n[继续](https://example.com)\n\n![图](image.webp)\n\n```\nnot words\n```'
+      },
+      { id: 'unlisted', data: { draft: false, archive: false }, body: '另 一篇' },
+      { id: 'draft', data: { draft: true }, body: '不计入草稿' }
+    ] as EssayEntry[];
+
+    expect(getEssayStats(entries)).toEqual({ articleCount: 2, wordCount: 12 });
+  });
+
+  it('returns zero totals when there are no published essays', () => {
+    expect(getEssayStats([])).toEqual({ articleCount: 0, wordCount: 0 });
   });
 });

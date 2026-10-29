@@ -89,12 +89,12 @@ export const ADMIN_HOME_INTRO_LINK_DEFAULT = ['archive', 'essay'] as const satis
 export const ADMIN_HOME_INTRO_LINK_LIMIT = 2;
 export const ADMIN_HOME_INTRO_LINK_KEY_SET: ReadonlySet<HomeIntroLinkKey> = new Set(ADMIN_HOME_INTRO_LINK_KEYS);
 export const ADMIN_HOME_INTRO_LINK_OPTIONS = [
-  { id: 'archive', label: '归档', href: '/archive/' },
+  { id: 'archive', label: '统计', href: '/archive/' },
   { id: 'essay', label: '随笔', href: '/essay/' },
   { id: 'bits', label: '絮语', href: '/bits/' },
   { id: 'memo', label: '纪年', href: '/memo/' },
   { id: 'about', label: '关于', href: '/about/' },
-  { id: 'tag', label: '#标签', href: '/archive/?picker=tag' }
+  { id: 'tag', label: '#标签', href: '/essay/?picker=tag' }
 ] as const satisfies readonly {
   id: HomeIntroLinkKey;
   label: string;

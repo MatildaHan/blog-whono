@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
-  BITS_CARD_FULL_RENDER_LIMIT,
   buildBitsCardViewModel,
   deriveBitsCardText
 } from '../src/lib/bits-card-view-model';
 
 describe('bits card view model', () => {
-  it('shares the 180-character full-render rule with bits cards', () => {
+  it('renders full Markdown regardless of length or an excerpt marker', () => {
     expect(deriveBitsCardText('短内容 **Markdown**').shouldRenderFull).toBe(true);
-    expect(deriveBitsCardText('a'.repeat(BITS_CARD_FULL_RENDER_LIMIT + 1))).toMatchObject({
-      shouldRenderFull: false,
-      excerpt: `${'a'.repeat(BITS_CARD_FULL_RENDER_LIMIT)}…`
+    const body = `${'长'.repeat(5000)}\n\n<!-- more -->\n\n最后一段。`;
+    expect(deriveBitsCardText(body)).toMatchObject({
+      shouldRenderFull: true,
+      plainText: `${'长'.repeat(5000)} 最后一段。`,
+      excerpt: `${'长'.repeat(5000)} 最后一段。`
     });
   });
 

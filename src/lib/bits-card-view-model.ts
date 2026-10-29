@@ -1,9 +1,7 @@
 import { createWithBase } from '../utils/format';
 import { formatBitsDateTime, parseBitsDateInput } from '../utils/bits-date';
-import { deriveMarkdownText, truncateText } from '../utils/excerpt';
+import { deriveMarkdownText } from '../utils/excerpt';
 import { normalizeBitsImageSource } from './bits-image-source';
-
-export const BITS_CARD_FULL_RENDER_LIMIT = 180;
 
 export type BitsCardImageInput = {
   src?: string | undefined;
@@ -81,11 +79,11 @@ const toDateLabel = (value: Date | string | null | undefined): string => {
 };
 
 export const deriveBitsCardText = (bodyText: string): BitsCardText => {
-  const { plainText, excerptText } = deriveMarkdownText(bodyText);
+  const { plainText } = deriveMarkdownText(bodyText);
   return {
     plainText,
-    excerpt: truncateText(excerptText, BITS_CARD_FULL_RENDER_LIMIT),
-    shouldRenderFull: plainText.length <= BITS_CARD_FULL_RENDER_LIMIT
+    excerpt: plainText,
+    shouldRenderFull: true
   };
 };
 

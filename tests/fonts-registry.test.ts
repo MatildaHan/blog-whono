@@ -10,6 +10,15 @@ import {
 } from '../src/lib/fonts/registry';
 
 describe('fonts/registry', () => {
+  it('allows Noto Serif SC for every typography role without external font downloads', () => {
+    const typography = { readable: 'noto-serif-sc', copy: 'noto-serif-sc', mono: 'noto-serif-sc', brand: 'noto-serif-sc' } as const;
+    expect(resolveTypographyFromRawUiSettings({ typography })).toEqual(typography);
+    expect(getSelectedAstroApiFonts(typography)).toEqual([]);
+    expect(getTypographyStyleOverride(typography)).toContain('--font-copy: "Noto Serif SC"');
+    expect(getTypographyStyleOverride(typography)).toContain('--font-mono: "Noto Serif SC"');
+    expect(getTypographyStyleOverride(typography)).toContain('--font-brand: "Noto Serif SC"');
+  });
+
   it('resolves raw ui settings with per-role validation and default fallback', () => {
     expect(resolveTypographyFromRawUiSettings(undefined)).toEqual(THEME_TYPOGRAPHY_DEFAULT);
     expect(

@@ -1,24 +1,31 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TagFilterHeader from './TagFilterHeader.astro';
-import EssayCard from './EssayCard.astro';
-import { createWithBase, getEssayDerivedText, getEssaySlug, type EssayEntry } from '../lib/content';
-import { getThemeSettings, getVisibleArticleMetaTags } from '../lib/theme-settings';
-import { joinPageSubtitleText } from '../utils/format';
+import TagLink from './TagLink.astro';
+import { createWithBase, getEssaySlug, type EssayEntry } from '../lib/content';
+import { collectTagSummary, getTagPath, type TagSummary } from '../lib/tags';
+import { getThemeSettings } from '../lib/theme-settings';
+import { formatISODateUtc, formatMonthDayUtc, groupByUtcYear, joinPageSubtitleText } from '../utils/format';
 
 const {
   currentPage,
+  currentPath = '/essay/',
+  currentTag = null,
   items,
   nextPath = null,
   prevPath = null,
   resultCount,
+  tagSummaries = collectTagSummary(items),
   totalPages
 } = Astro.props as {
   currentPage: number;
+  currentPath?: string;
+  currentTag?: TagSummary | null;
   items: EssayEntry[];
   nextPath?: string | null;
   prevPath?: string | null;
   resultCount: number;
+  tagSummaries?: TagSummary[];
   totalPages: number;
 };
 
@@ -26,13 +33,13 @@ const base = import.meta.env.BASE_URL ?? '/';
 const withBase = createWithBase(base);
 const {
   settings: {
-    page,
-    ui: { articleMeta }
+    page
   }
 } = getThemeSettings();
 
 const pageTitleText = page.essay.title || '随笔';
-const pageTitleParts = [pageTitleText, currentPage > 1 ? `第 ${currentPage} 页` : null].filter(Boolean);
+const pageTitleParts = [pageTitleText, currentTag ? `#${currentTag.label}` : null, currentPage > 1 ? `第 ${currentPage} 页` : null]
+  .filter(Boolean);
 const pageTitle = pageTitleParts.join(' · ');
 const subtitleText = joinPageSubtitleText(
   page.essay.subtitle,
@@ -40,19 +47,36 @@ const subtitleText = joinPageSubtitleText(
   totalPages > 1 ? `第 ${currentPage} / ${totalPages} 页` : null
 );
 const pageDescription = joinPageSubtitleText(
-  `${pageTitleText}列表`,
+  currentTag ? `${pageTitleText}标签 #${currentTag.label}` : `${pageTitleText}列表`,
   page.essay.subtitle,
   `共 ${resultCount} 篇`,
   totalPages > 1 ? `第 ${currentPage} / ${totalPages} 页` : null
 ) ?? `${pageTitleText}列表`;
+const groups = groupByUtcYear(items, (entry) => entry.data.date);
+const scopeRootPath = '/essay/';
 const fallbackListId = 'essay-tag-list';
+const tagOptions = tagSummaries.map((tagSummary) => ({
+  ...tagSummary,
+  href: withBase(currentTag?.key === tagSummary.key ? currentPath : getTagPath('archive', tagSummary.key)),
+  isActive: currentTag?.key === tagSummary.key
+}));
+const currentTagState = currentTag
+  ? {
+      clearHref: withBase(scopeRootPath),
+      label: currentTag.label
+    }
+  : null;
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} bodyClass="essay-page">
+<BaseLayout title={pageTitle} description={pageDescription} bodyClass="essay-page" activeNavId="essay">
   <div
     class="entry-filters"
     data-entry-filters
     data-index-url="/essay/index.json"
+    data-section-selector="[data-entry-section]"
+    data-tag-scope="archive"
+    data-active-tag-key={currentTag?.key ?? undefined}
+    data-active-tag-label={currentTag?.label ?? undefined}
   >
     <TagFilterHeader
       pageTitleText={pageTitleText}
@@ -61,26 +85,38 @@ const fallbackListId = 'essay-tag-list';
       pickerHref={`#${fallbackListId}`}
       fallbackListId={fallbackListId}
       dialogTitleId="essay-tag-dialog-title"
+      currentTag={currentTagState}
+      tagOptions={tagOptions}
       searchAriaLabel={`搜索${pageTitleText}`}
-      headerClass="page-header page-header--essay page-header--with-search"
     />
   </div>
 
-  <div class="list">
-    {items.map((entry) => (
-      <EssayCard
-        href={withBase(`/archive/${getEssaySlug(entry)}/`)}
-        slug={getEssaySlug(entry)}
-        title={entry.data.title}
-        excerpt={getEssayDerivedText(entry).excerpt}
-        date={entry.data.date}
-        updatedAt={entry.data.updatedAt}
-        visibleTags={getVisibleArticleMetaTags(entry.data.tags, 'list')}
-        articleMetaSettings={articleMeta}
-        badge={entry.data.badge}
-      />
-    ))}
-  </div>
+  {groups.map((group) => (
+    <section data-entry-section>
+      <h2 class="archive-year">{group.year}</h2>
+      <div class="archive-list">
+        {group.list.map((entry) => {
+          const slug = getEssaySlug(entry);
+          const href = withBase(`/archive/${slug}/`);
+          const tag = currentTag?.label ?? entry.data.tags?.[0];
+          return (
+            <div class="archive-row" data-entry-item data-slug={slug}>
+              <div class="archive-title">
+                <a href={href}>{entry.data.title}</a>
+              </div>
+              <div class="archive-meta">
+                <div class="archive-date">
+                  <span class="archive-date-md">{formatMonthDayUtc(entry.data.date)}</span>
+                  <span class="archive-date-full">{formatISODateUtc(entry.data.date)}</span>
+                </div>
+                {tag ? <div class="archive-tag"><TagLink tag={tag} /></div> : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  ))}
 
   {totalPages > 1 ? (
     <nav class="pagination" aria-label={`${pageTitleText}分页`}>

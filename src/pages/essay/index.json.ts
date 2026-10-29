@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro';
-import { getEssayDerivedText, getEssaySlug, getVisibleEssays } from '../../lib/content';
+import { getEssayDerivedText, getEssaySlug, getArchiveEssays } from '../../lib/content';
 
 export const prerender = true;
 
 export const GET: APIRoute = async () => {
-  const visibleEssays = await getVisibleEssays();
+  const visibleEssays = await getArchiveEssays();
   const index = visibleEssays.map((entry) => {
     const { text } = getEssayDerivedText(entry);
     return {

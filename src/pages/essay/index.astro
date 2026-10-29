@@ -1,9 +1,9 @@
 ---
 import EssayPageView from '../../components/EssayPageView.astro';
-import { getPageSlice, getTotalPages, getVisibleEssays } from '../../lib/content';
+import { getPageSlice, getTotalPages, getArchiveEssays } from '../../lib/content';
 import { PAGE_SIZE_ESSAY } from '../../../site.config.mjs';
 
-const visibleEssays = await getVisibleEssays();
+const visibleEssays = await getArchiveEssays();
 const totalPages = getTotalPages(visibleEssays.length, PAGE_SIZE_ESSAY);
 const currentPage = 1;
 const pageEssays = getPageSlice(visibleEssays, currentPage, PAGE_SIZE_ESSAY);

@@ -1,0 +1,27 @@
+.site-statistics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 52px 0 0;
+  font-size: 18px;
+  line-height: 2;
+}
+
+.site-statistics strong {
+  margin-inline: 6px;
+  font-size: 38px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .site-statistics {
+    margin-top: 38px;
+    font-size: 16px;
+  }
+
+  .site-statistics strong {
+    font-size: 32px;
+  }
+}
